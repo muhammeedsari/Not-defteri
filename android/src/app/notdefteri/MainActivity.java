@@ -262,17 +262,28 @@ public class MainActivity extends Activity {
         @JavascriptInterface public boolean recResume() { return Recorder.resumeManual(); }
         @JavascriptInterface public String recInfo() { return Recorder.info(); }
         @JavascriptInterface public float recLevel() { return Recorder.level(); }
+        /** Stops and files the recording as a note: {"ok":true, "item":{name, ms}, "id": note id} */
         @JavascriptInterface public String recStop() {
             keepScreenOn(false);
-            return Recorder.stop(MainActivity.this);
+            String res = Recorder.stop(MainActivity.this);
+            try {
+                JSONObject o = new JSONObject(res);
+                if (!o.optBoolean("ok")) return res;
+                JSONObject item = o.getJSONObject("item");
+                o.put("id", Db.get(MainActivity.this).addVoiceNote(item.getString("name"), item.getLong("ms")));
+                return o.toString();
+            } catch (Exception e) {
+                return res;
+            }
         }
         @JavascriptInterface public void recCancel() {
             keepScreenOn(false);
             Recorder.cancel(MainActivity.this);
         }
 
-        /* -- saved recordings (until the notes database arrives in step 2) -- */
-        @JavascriptInterface public String recList() { return Recorder.list(MainActivity.this); }
-        @JavascriptInterface public boolean recDelete(String name) { return Recorder.delete(MainActivity.this, name); }
+        /* -- database -- */
+        @JavascriptInterface public String notes() { return Db.get(MainActivity.this).notes(); }
+        @JavascriptInterface public boolean noteDelete(long id) { return Db.get(MainActivity.this).deleteNote(id); }
+        @JavascriptInterface public String categories() { return Db.get(MainActivity.this).categories(); }
     }
 }

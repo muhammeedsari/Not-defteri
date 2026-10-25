@@ -88,9 +88,9 @@ svg{width:22px;height:22px;fill:currentColor}
     Aklındakini söylemek için alttaki düğmeye bas.
   </div>
 
-  <section id="recsBox" hidden>
-    <h2>Kayıtlar</h2>
-    <div id="recs" class="list"></div>
+  <section id="notesBox" hidden>
+    <h2>Notlar</h2>
+    <div id="notes" class="list"></div>
   </section>
 </main>
 
@@ -128,13 +128,11 @@ const ICON_DEL = '<svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 
 
 function caps() { try { return AND ? JSON.parse(AND.caps()) : {}; } catch (e) { return {}; } }
 function fmtDur(ms) { const s = Math.round(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
-function fmtWhen(name) {   // 20261025-091931.m4a
-  const m = /^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})/.exec(name);
-  if (!m) return name;
-  const d = new Date(+m[1], m[2] - 1, +m[3]), now = new Date();
+function fmtWhen(ms) {
+  const d = new Date(ms), now = new Date();
   const y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-  const day = d.toDateString() === now.toDateString() ? 'Bugün' : d.toDateString() === y.toDateString() ? 'Dün' : (+m[3]) + ' ' + MONTHS[m[2] - 1];
-  return day + ' ' + m[4] + ':' + m[5];
+  const day = d.toDateString() === now.toDateString() ? 'Bugün' : d.toDateString() === y.toDateString() ? 'Dün' : d.getDate() + ' ' + MONTHS[d.getMonth()];
+  return day + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
 }
 let toastT;
 function toast(msg) {
@@ -156,34 +154,34 @@ function renderToday() {
   $('#today').textContent = d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + DAYS[d.getDay()];
 }
 
-/* Saved recordings: a stand-in until notes and tasks get their database (step 2) */
+/* Notes (plan 7: notes without tasks, newest first; grouping by category arrives with the Today screen, step 8) */
 const audio = new Audio();
-let playing = null;
-audio.addEventListener('ended', () => { playing = null; renderRecs(); });
-function renderRecs() {
-  let list = [];
-  try { list = AND ? JSON.parse(AND.recList()) : []; } catch (e) { }
-  $('#empty').hidden = list.length > 0;
-  $('#recsBox').hidden = list.length === 0;
-  $('#recs').innerHTML = list.map(r => `<div class="row" data-n="${esc(r.name)}">
-    <button class="play" data-act="play" aria-label="Dinle">${playing === r.name ? ICON_STOP : ICON_PLAY}</button>
-    <div class="meta"><b>Sesli not</b><span>${esc(fmtWhen(r.name))} · ${fmtDur(r.ms)}</span></div>
+let playing = null, NOTES = [];
+audio.addEventListener('ended', () => { playing = null; renderNotes(); });
+function renderNotes() {
+  try { NOTES = AND ? JSON.parse(AND.notes()) : []; } catch (e) { NOTES = []; }
+  $('#empty').hidden = NOTES.length > 0;
+  $('#notesBox').hidden = NOTES.length === 0;
+  $('#notes').innerHTML = NOTES.map(n => `<div class="row" data-id="${n.id}">
+    ${n.audio ? `<button class="play" data-act="play" aria-label="Dinle">${playing === n.id ? ICON_STOP : ICON_PLAY}</button>` : ''}
+    <div class="meta"><b>${esc(n.text ? n.text.slice(0, 80) : 'Sesli not')}</b><span>${esc(fmtWhen(n.at))}${n.ms ? ' · ' + fmtDur(n.ms) : ''}${n.cat ? ' · ' + esc(n.cat) : ''}</span></div>
     <button class="del" data-act="del" aria-label="Sil">${ICON_DEL}</button></div>`).join('');
 }
-$('#recs').addEventListener('click', e => {
+$('#notes').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  const name = b.closest('.row').dataset.n;
+  const id = +b.closest('.row').dataset.id, n = NOTES.find(x => x.id === id);
+  if (!n) return;
   if (b.dataset.act === 'play') {
-    if (playing === name) { audio.pause(); playing = null; }
-    else { audio.src = '/__audio/' + encodeURIComponent(name); audio.play().catch(() => toast('Ses çalınamadı')); playing = name; }
-    renderRecs();
+    if (playing === id) { audio.pause(); playing = null; }
+    else { audio.src = '/__audio/' + encodeURIComponent(n.audio); audio.play().catch(() => toast('Ses çalınamadı')); playing = id; }
+    renderNotes();
   } else if (b.dataset.act === 'del') {
-    sheet(`<h3>Bu kayıt silinsin mi?</h3><p>${esc(fmtWhen(name))} kaydı telefondan kalıcı olarak silinir.</p>
+    sheet(`<h3>Bu not silinsin mi?</h3><p>${esc(fmtWhen(n.at))} notu, sesiyle birlikte telefondan kalıcı olarak silinir.</p>
       <div class="btns"><button class="btn" id="no">Vazgeç</button><button class="btn red" id="yes">Sil</button></div>`);
     $('#no').onclick = closeSheet;
     $('#yes').onclick = () => {
-      if (playing === name) { audio.pause(); playing = null; }
-      AND && AND.recDelete(name); closeSheet(); renderRecs();
+      if (playing === id) { audio.pause(); playing = null; }
+      AND && AND.noteDelete(id); closeSheet(); renderNotes();
     };
   }
 });
@@ -206,7 +204,7 @@ function startRec() {
   if (!caps().mic) { permWait = startRec; AND.requestMic(); return; }
   const r = JSON.parse(AND.recStart());
   if (!r.ok) { if (r.error === 'perm') { permWait = startRec; AND.requestMic(); } else toast('Kayıt başlamadı: ' + r.error); return; }
-  if (playing) { audio.pause(); playing = null; renderRecs(); }
+  if (playing) { audio.pause(); playing = null; renderNotes(); }
   AND.vibrate();
   R.on = true; R.levels = [];
   $('#rec').hidden = false; $('#rec').classList.remove('paused');
@@ -257,7 +255,7 @@ $('#recDone').onclick = () => {
   endRec(); AND.vibrate();
   if (r.ok) toast('Not kaydedildi · ' + fmtDur(r.item.ms));
   else toast(r.error === 'empty' ? 'Kayıt çok kısaydı' : 'Kayıt kaydedilemedi');
-  renderRecs();
+  renderNotes();
 };
 $('#recCancel').onclick = () => {
   sheet(`<h3>Kayıt silinsin mi?</h3><p>Bu kayıt kaydedilmeden atılır.</p>
@@ -284,7 +282,7 @@ window.addEventListener('resize', () => { if (R.on) sizeWave(); });
 const c0 = caps();
 if (c0.native) document.documentElement.dataset.theme = c0.dark ? 'dark' : 'light';
 renderToday();
-renderRecs();
+renderNotes();
 window.__ndResume();
 </script>
 </body>

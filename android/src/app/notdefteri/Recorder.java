@@ -6,13 +6,10 @@ import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.os.Build;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
@@ -157,29 +154,18 @@ final class Recorder {
         return o;
     }
 
-    /** Saved recordings, newest first. Duration comes from the file header. */
-    static String list(Context c) {
-        JSONArray a = new JSONArray();
-        File[] fs = dir(c).listFiles();
-        if (fs == null) return a.toString();
-        Arrays.sort(fs, new Comparator<File>() {
-            @Override public int compare(File x, File y) { return y.getName().compareTo(x.getName()); }
-        });
-        for (File f : fs) {
-            if (!f.getName().endsWith(".m4a") || f.equals(file)) continue;
-            long ms = 0;
-            android.media.MediaMetadataRetriever r = new android.media.MediaMetadataRetriever();
-            try {
-                r.setDataSource(f.getAbsolutePath());
-                String d = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION);
-                if (d != null) ms = Long.parseLong(d);
-            } catch (Exception ignored) {
-            } finally {
-                try { r.release(); } catch (Exception ignored) { }
-            }
-            try { a.put(item(f, ms)); } catch (Exception ignored) { }
+    /** Length from the file header, for recordings made before their note existed. */
+    static long duration(File f) {
+        android.media.MediaMetadataRetriever r = new android.media.MediaMetadataRetriever();
+        try {
+            r.setDataSource(f.getAbsolutePath());
+            String d = r.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION);
+            return d == null ? 0 : Long.parseLong(d);
+        } catch (Exception e) {
+            return 0;
+        } finally {
+            try { r.release(); } catch (Exception ignored) { }
         }
-        return a.toString();
     }
 
     static boolean delete(Context c, String name) {

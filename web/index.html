@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Not Defteri</title>
+<style>
+:root{
+  --bg:#f3f1ec;--card:#fff;--ink:#1d2230;--soft:#5d6475;--line:#e3e0d8;
+  --accent:#2f4a9e;--accent-ink:#fff;--rec:#d64545;--warn:#b7791f;
+  --r:16px;color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121418;--card:#1c1f26;--ink:#e9ebf1;--soft:#9aa1b2;--line:#2a2e37;
+  --accent:#8fa6f0;--accent-ink:#121418;--rec:#ef6b6b;--warn:#e0a84a;color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#121418;--card:#1c1f26;--ink:#e9ebf1;--soft:#9aa1b2;--line:#2a2e37;
+  --accent:#8fa6f0;--accent-ink:#121418;--rec:#ef6b6b;--warn:#e0a84a;color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-user-select:none;user-select:none;overflow-x:hidden}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+[hidden]{display:none!important}
+main{padding:calc(env(safe-area-inset-top,0px) + 20px) 16px 140px;max-width:640px;margin:0 auto}
+header h1{margin:0;font-size:30px;letter-spacing:-.5px}
+header p{margin:2px 0 0;color:var(--soft)}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--soft);margin:28px 0 8px;font-weight:600}
+.empty{margin-top:56px;text-align:center;color:var(--soft)}
+.empty b{display:block;color:var(--ink);font-size:18px;margin-bottom:4px}
+.list{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:var(--r);padding:10px 12px;border:1px solid var(--line)}
+.row .play{width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.row .meta{flex:1;min-width:0}
+.row .meta b{display:block;font-weight:600}
+.row .meta span{color:var(--soft);font-size:14px}
+.row .del{width:40px;height:40px;display:grid;place-items:center;color:var(--soft);flex:none}
+svg{width:22px;height:22px;fill:currentColor}
+/* record button */
+.dock{position:fixed;left:0;right:0;bottom:0;padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 22px);display:flex;justify-content:center;
+  background:linear-gradient(to top,var(--bg) 60%,transparent)}
+.mic{width:76px;height:76px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;
+  box-shadow:0 6px 20px rgba(47,74,158,.35)}
+.mic svg{width:34px;height:34px}
+.mic:active{transform:scale(.96)}
+/* sheets */
+.veil{position:fixed;inset:0;background:rgba(10,12,18,.45);display:flex;align-items:flex-end;justify-content:center;z-index:5}
+.sheet{width:100%;max-width:640px;background:var(--card);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px) + 22px)}
+.sheet h3{margin:0 0 6px;font-size:20px}
+.sheet p{margin:0 0 16px;color:var(--soft)}
+.btns{display:flex;gap:10px}
+.btn{flex:1;min-height:48px;border-radius:14px;background:var(--bg);font-weight:600}
+.btn.pri{background:var(--accent);color:var(--accent-ink)}
+.btn.red{background:var(--rec);color:#fff}
+/* recording */
+#rec{position:fixed;inset:0;background:var(--bg);z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px 16px calc(env(safe-area-inset-bottom,0px) + 28px)}
+#rec .top{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%}
+#rec .state{color:var(--rec);font-weight:600;display:flex;align-items:center;gap:8px}
+#rec .state i{width:10px;height:10px;border-radius:50%;background:var(--rec);animation:blink 1.2s infinite}
+#rec.paused .state{color:var(--warn)}#rec.paused .state i{background:var(--warn);animation:none}
+@keyframes blink{50%{opacity:.25}}
+#recTime{font-size:56px;font-variant-numeric:tabular-nums;letter-spacing:-1px;margin:8px 0 18px}
+#wave{width:100%;max-width:560px;height:96px}
+#recHint{min-height:24px;color:var(--soft);margin:12px 0 0;text-align:center}
+.recbar{display:flex;align-items:center;justify-content:center;gap:28px;width:100%}
+.round{width:60px;height:60px;border-radius:50%;background:var(--card);border:1px solid var(--line);display:grid;place-items:center}
+.round.big{width:84px;height:84px;background:var(--accent);color:var(--accent-ink);border:0}
+.round.big svg{width:38px;height:38px}
+.round small{display:block}
+.lab{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;color:var(--soft)}
+#toast{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 120px);margin:0 auto;max-width:420px;
+  background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:14px;text-align:center;z-index:9;
+  transition:opacity .25s,transform .25s;opacity:0;transform:translateY(8px);pointer-events:none}
+#toast.on{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Bugün</h1>
+    <p id="today"></p>
+  </header>
+
+  <div id="empty" class="empty">
+    <b>Henüz not yok</b>
+    Aklındakini söylemek için alttaki düğmeye bas.
+  </div>
+
+  <section id="recsBox" hidden>
+    <h2>Kayıtlar</h2>
+    <div id="recs" class="list"></div>
+  </section>
+</main>
+
+<div class="dock"><button class="mic" id="micBtn" aria-label="Kayda başla">
+  <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11z"/></svg>
+</button></div>
+
+<div id="rec" hidden>
+  <div class="top">
+  <div class="state"><i></i><span id="recState">Kaydediliyor</span></div>
+  <div id="recTime">0:00</div>
+  <canvas id="wave"></canvas>
+  <p id="recHint"></p>
+  </div>
+  <div class="recbar">
+    <div class="lab"><button class="round" id="recCancel" aria-label="İptal"><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"/></svg></button>İptal</div>
+    <div class="lab"><button class="round big" id="recDone" aria-label="Bitir"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></button>Bitir</div>
+    <div class="lab"><button class="round" id="recPause" aria-label="Duraklat"><svg viewBox="0 0 24 24" id="pauseIco"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg></button><span id="pauseLab">Duraklat</span></div>
+  </div>
+</div>
+
+<div id="veil" class="veil" hidden><div class="sheet" id="sheet"></div></div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+const AND = window.NotDefteriAndroid || null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const DAYS = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+const ICON_PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+const ICON_STOP = '<svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>';
+const ICON_DEL = '<svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"/></svg>';
+
+function caps() { try { return AND ? JSON.parse(AND.caps()) : {}; } catch (e) { return {}; } }
+function fmtDur(ms) { const s = Math.round(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+function fmtWhen(name) {   // 20261025-091931.m4a
+  const m = /^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})/.exec(name);
+  if (!m) return name;
+  const d = new Date(+m[1], m[2] - 1, +m[3]), now = new Date();
+  const y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+  const day = d.toDateString() === now.toDateString() ? 'Bugün' : d.toDateString() === y.toDateString() ? 'Dün' : (+m[3]) + ' ' + MONTHS[m[2] - 1];
+  return day + ' ' + m[4] + ':' + m[5];
+}
+let toastT;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2600);
+}
+
+/* ---------- sheet (in-page dialogs; the back button closes them) ---------- */
+let sheetClose = null;
+function sheet(html, onClose) {
+  $('#sheet').innerHTML = html; $('#veil').hidden = false; sheetClose = onClose || null;
+}
+function closeSheet() { $('#veil').hidden = true; const f = sheetClose; sheetClose = null; if (f) f(); }
+$('#veil').addEventListener('click', e => { if (e.target.id === 'veil') closeSheet(); });
+
+/* ---------- Today ---------- */
+function renderToday() {
+  const d = new Date();
+  $('#today').textContent = d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + DAYS[d.getDay()];
+}
+
+/* Saved recordings: a stand-in until notes and tasks get their database (step 2) */
+const audio = new Audio();
+let playing = null;
+audio.addEventListener('ended', () => { playing = null; renderRecs(); });
+function renderRecs() {
+  let list = [];
+  try { list = AND ? JSON.parse(AND.recList()) : []; } catch (e) { }
+  $('#empty').hidden = list.length > 0;
+  $('#recsBox').hidden = list.length === 0;
+  $('#recs').innerHTML = list.map(r => `<div class="row" data-n="${esc(r.name)}">
+    <button class="play" data-act="play" aria-label="Dinle">${playing === r.name ? ICON_STOP : ICON_PLAY}</button>
+    <div class="meta"><b>Sesli not</b><span>${esc(fmtWhen(r.name))} · ${fmtDur(r.ms)}</span></div>
+    <button class="del" data-act="del" aria-label="Sil">${ICON_DEL}</button></div>`).join('');
+}
+$('#recs').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const name = b.closest('.row').dataset.n;
+  if (b.dataset.act === 'play') {
+    if (playing === name) { audio.pause(); playing = null; }
+    else { audio.src = '/__audio/' + encodeURIComponent(name); audio.play().catch(() => toast('Ses çalınamadı')); playing = name; }
+    renderRecs();
+  } else if (b.dataset.act === 'del') {
+    sheet(`<h3>Bu kayıt silinsin mi?</h3><p>${esc(fmtWhen(name))} kaydı telefondan kalıcı olarak silinir.</p>
+      <div class="btns"><button class="btn" id="no">Vazgeç</button><button class="btn red" id="yes">Sil</button></div>`);
+    $('#no').onclick = closeSheet;
+    $('#yes').onclick = () => {
+      if (playing === name) { audio.pause(); playing = null; }
+      AND && AND.recDelete(name); closeSheet(); renderRecs();
+    };
+  }
+});
+
+/* ---------- recording ---------- */
+const R = { on: false, timer: 0, levels: [], lastHint: '' };
+let permWait = null;
+window.__ndPerm = (kind, ok, blocked) => {
+  if (kind !== 'mic') return;
+  const f = permWait; permWait = null;
+  if (ok) { f && f(); return; }
+  sheet(`<h3>Mikrofon izni gerekli</h3><p>Sesli not alabilmek için mikrofona izin vermelisin. Ses yalnızca telefonunda kalır.</p>
+    <div class="btns"><button class="btn" id="no">Vazgeç</button><button class="btn pri" id="yes">${blocked ? 'Ayarları aç' : 'Tekrar dene'}</button></div>`);
+  $('#no').onclick = closeSheet;
+  $('#yes').onclick = () => { closeSheet(); if (blocked) AND.openSettings(); else startRec(); };
+};
+
+function startRec() {
+  if (!AND) { toast('Kayıt yalnızca telefondaki uygulamada çalışır'); return; }
+  if (!caps().mic) { permWait = startRec; AND.requestMic(); return; }
+  const r = JSON.parse(AND.recStart());
+  if (!r.ok) { if (r.error === 'perm') { permWait = startRec; AND.requestMic(); } else toast('Kayıt başlamadı: ' + r.error); return; }
+  if (playing) { audio.pause(); playing = null; renderRecs(); }
+  AND.vibrate();
+  R.on = true; R.levels = [];
+  $('#rec').hidden = false; $('#rec').classList.remove('paused');
+  $('#recTime').textContent = '0:00'; $('#recHint').textContent = '';
+  sizeWave();
+  R.timer = setInterval(tick, 80);
+}
+
+function tick() {
+  const info = JSON.parse(AND.recInfo());
+  const paused = info.state === 'paused';
+  $('#rec').classList.toggle('paused', paused);
+  $('#recState').textContent = paused ? 'Duraklatıldı' : 'Kaydediliyor';
+  $('#pauseLab').textContent = paused ? 'Devam' : 'Duraklat';
+  $('#pauseIco').innerHTML = paused ? '<path d="M8 5v14l11-7z"/>' : '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
+  $('#recTime').textContent = fmtDur(info.ms);
+  const hint = info.call ? 'Arama sırasında duraklatıldı; bitince kendiliğinden devam eder.' : '';
+  if (hint !== R.lastHint) { $('#recHint').textContent = hint; R.lastHint = hint; }
+  if (!paused) { R.levels.push(AND.recLevel()); drawWave(); }
+}
+
+function sizeWave() {
+  const c = $('#wave'), dpr = window.devicePixelRatio || 1;
+  c.width = c.clientWidth * dpr; c.height = c.clientHeight * dpr;
+}
+function drawWave() {
+  const c = $('#wave'), g = c.getContext('2d'), dpr = window.devicePixelRatio || 1;
+  const step = 6 * dpr, bar = 3 * dpr, n = Math.floor(c.width / step), mid = c.height / 2;
+  const lv = R.levels.slice(-n);
+  g.clearRect(0, 0, c.width, c.height);
+  g.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent');
+  for (let i = 0; i < lv.length; i++) {
+    const h = Math.max(bar, Math.sqrt(lv[i]) * c.height * 0.95);
+    g.fillRect(c.width - (lv.length - i) * step, mid - h / 2, bar, h);
+  }
+}
+
+function endRec() { R.on = false; clearInterval(R.timer); $('#rec').hidden = true; }
+
+$('#micBtn').onclick = startRec;
+$('#recPause').onclick = () => {
+  const paused = JSON.parse(AND.recInfo()).state === 'paused';
+  paused ? AND.recResume() : AND.recPause();
+  tick();
+};
+$('#recDone').onclick = () => {
+  const r = JSON.parse(AND.recStop());
+  endRec(); AND.vibrate();
+  if (r.ok) toast('Not kaydedildi · ' + fmtDur(r.item.ms));
+  else toast(r.error === 'empty' ? 'Kayıt çok kısaydı' : 'Kayıt kaydedilemedi');
+  renderRecs();
+};
+$('#recCancel').onclick = () => {
+  sheet(`<h3>Kayıt silinsin mi?</h3><p>Bu kayıt kaydedilmeden atılır.</p>
+    <div class="btns"><button class="btn" id="no">Kayda dön</button><button class="btn red" id="yes">Sil</button></div>`);
+  $('#no').onclick = closeSheet;
+  $('#yes').onclick = () => { closeSheet(); AND.recCancel(); endRec(); };
+};
+
+/* ---------- phone hooks ---------- */
+window.__ndBack = () => {
+  if (!$('#veil').hidden) { closeSheet(); return true; }
+  if (R.on) { toast('Bitirmek için ✓, atmak için ✕'); return true; }
+  return false;
+};
+window.__ndResume = () => {
+  renderToday();
+  // a recording may still be running in the background service after the page was reloaded
+  if (AND && !R.on && JSON.parse(AND.recInfo()).state !== 'idle') {
+    R.on = true; R.levels = []; $('#rec').hidden = false; sizeWave(); R.timer = setInterval(tick, 80);
+  }
+};
+window.addEventListener('resize', () => { if (R.on) sizeWave(); });
+
+const c0 = caps();
+if (c0.native) document.documentElement.dataset.theme = c0.dark ? 'dark' : 'light';
+renderToday();
+renderRecs();
+window.__ndResume();
+</script>
+</body>
+</html>

@@ -201,14 +201,16 @@ Her sohbet tek bir adımı bitirir. Kurallar `CLAUDE.md`'de.
 2. Veritabanı ve veri modeli
 3. Whisper entegrasyonu ve parça parça yazıya çevirme
 4. Ayrıştırma: tarih ve saat
-5. Ayrıştırma: görev, kişi, öncelik, kategori, tekrar
+5. Ayrıştırma: görev, kişi, öncelik, kategori, tekrar ("her ayın 1'inde kira")
 6. Onay kartı
-7. Hatırlatmalar ve bildirim düğmeleri
-8. Bugün ekranı ve hiyerarşi
-9. Sesle bitirme ve eşleştirici
-10. Sabah özeti ve gecikme soruları
-11. Widget, ayarlar, yedekleme ve dışa aktarma
+7. Hatırlatmalar ve bildirim düğmeleri (Bitti / Ertele / Aç); Bitti → Bitenler'e otomatik taşıma, tekrarlayan görevin sonraki tekrarı
+8. Bugün ekranı ve hiyerarşi (Gecikenler → Bugün → Yakında → Tarihsiz → Notlar → Bitenler)
+9. Sesle bitirme ve eşleştirici (onaylanınca Bitenler'e taşıma, notun arşivlenmesi)
+10. Sabah özeti ve gecikme soruları ("Hâlâ geçerli mi?", 3 kez ertelenen görev için bölme/silme önerisi)
+11. Widget, kilit ekranından kayıt, ayarlar, yedekleme ve dışa aktarma
 12. Öğrenme olaylarının kaydı ve v1 yayını
+
+**Sürüm kuralı (kullanıcı, 25 Ekim 2026):** Her sürüm bir öncekinin üstüne eklenir. Bir sürümün 10. bölümdeki kabul ölçütlerinin hepsi sağlanmadan bir sonrakine geçilmez. v2/v3 özellikleri v1 içine alınmaz.
 
 ## 13. Açık kararlar
 İlk sohbete başlamadan önce ilk iki karar verilmeli; diğerleri v1 bitmeden netleşir.

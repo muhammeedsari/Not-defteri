@@ -1,0 +1,204 @@
+# Örnek cümle seti (plan 6. bölüm). Şimdiki zaman: 2026-10-26 Pazartesi 10:00.
+# Sütunlar: cümle<TAB>beklenen (anahtar=değer; ...). Anahtarlar: n görev sayısı, tarih, saat, son (son tarih), kisi, kat, onc (1 yüksek 2 normal 3 düşük), tekrar, bitti.
+# tarih/saat/son/kisi/kat/onc/tekrar ilk göreve bakar. '-' = olmamalı.
+Bugün Ahmet'i ara	tarih=2026-10-26; saat=-; kisi=Ahmet
+Yarın faturayı öde	tarih=2026-10-27; saat=-; kat=Para
+Yarın Ayşe'ye mail gönder	tarih=2026-10-27; saat=-; kisi=Ayşe; kat=İş
+Öbür gün kirayı yatırmam lazım	tarih=2026-10-28; saat=-; kat=Para
+Ertesi gün markete git	tarih=2026-10-28; saat=-; kat=Alışveriş
+Haftaya raporu teslim etmem lazım	tarih=2026-11-02; saat=-; kat=İş
+3 gün sonra doktora git	tarih=2026-10-29; saat=-; kat=Sağlık
+üç gün sonra annemi ara	tarih=2026-10-29; saat=-
+İki hafta sonra aidatı öde	tarih=2026-11-09; saat=-; kat=Para
+bir hafta sonra sunumu hazırla	tarih=2026-11-02; saat=-; kat=İş
+5 gün sonra ilacı al	tarih=2026-10-31; saat=-; kat=Sağlık
+Ay sonunda kredi taksitini öde	tarih=2026-10-31; saat=-; kat=Para
+Ay sonuna kadar vergiyi öde	tarih=2026-10-31; saat=-; kat=Para; son=1
+Hafta sonu çamaşırları yıka	tarih=2026-10-31; saat=-; kat=Ev
+hafta sonunda bahçeyi temizle	tarih=2026-10-31; saat=-; kat=Ev
+bugün akşam ekmek al	tarih=2026-10-26; saat=19:00; kat=Alışveriş
+yarın sabah toplantıya katıl	tarih=2026-10-27; saat=09:00; kat=İş
+yarın öğlen Mehmet'le yemek için ara	tarih=2026-10-27; saat=12:00; kisi=Mehmet
+yarın akşam çöpü çıkar	tarih=2026-10-27; saat=19:00; kat=Ev
+yarın gece ilacımı içmem lazım	tarih=2026-10-27; saat=22:00; kat=Sağlık
+öbür gün sabah bankaya gitmem lazım	tarih=2026-10-28; saat=09:00; kat=Para
+Salı günü kombiciyi ara	tarih=2026-10-27; saat=-; kat=Ev
+Çarşamba toplantıya hazırlan	tarih=2026-10-28; saat=-; kat=İş
+Perşembe 3'te Ahmet'i ara	tarih=2026-10-29; saat=15:00; kisi=Ahmet
+Perşembeye kadar raporu bitir	tarih=2026-10-29; saat=-; kat=İş; son=1
+Cuma müşteriye teklif gönder	tarih=2026-10-30; saat=-; kat=İş
+Cumaya kadar sözleşmeyi imzala	tarih=2026-10-30; saat=-; kat=İş; son=1
+bu cuma Ayşe'yi ara	tarih=2026-10-30; saat=-; kisi=Ayşe
+gelecek cuma diş randevusu al	tarih=2026-11-06; saat=-; kat=Sağlık
+önümüzdeki salı aidatı öde	tarih=2026-11-03; saat=-; kat=Para
+haftaya cuma raporu gönder	tarih=2026-11-06; saat=-; kat=İş
+haftaya salı doktora git	tarih=2026-11-03; saat=-; kat=Sağlık
+Cumartesi pazara gitmem lazım	tarih=2026-10-31; saat=-; kat=Alışveriş
+Cumartesi sabah koşuya git	tarih=2026-10-31; saat=09:00
+Pazar annemleri ziyaret et	tarih=2026-11-01; saat=-
+Pazartesi müdürle görüş, sunumu gönder	tarih=2026-11-02; saat=-; kat=İş
+pazartesi sabah 9'da toplantı var unutma	tarih=2026-11-02; saat=09:00; kat=İş
+salı akşam 8'de Ali'yi ara	tarih=2026-10-27; saat=20:00; kisi=Ali
+çarşamba öğleden sonra tahlil sonuçlarını al	tarih=2026-10-28; saat=15:00; kat=Sağlık
+perşembe gece 11'de ilaç iç	tarih=2026-10-29; saat=23:00; kat=Sağlık
+cuma 15:30'da müşteri toplantısı var unutma	tarih=2026-10-30; saat=15:30; kat=İş
+cuma öğlen Can'la buluşmayı unutma	tarih=2026-10-30; saat=12:00; kisi=Can
+çarşambaya kadar faturayı öde	tarih=2026-10-28; saat=-; kat=Para; son=1
+cumartesiye kadar halıyı yıkat	tarih=2026-10-31; saat=-; kat=Ev; son=1
+gelecek hafta salı Zeynep'i ara	tarih=2026-11-03; saat=-; kisi=Zeynep
+gelecek hafta vergi beyannamesini hazırla	tarih=2026-11-02; saat=-; kat=Para
+30 Ekim'de diş randevusu al	tarih=2026-10-30; saat=-; kat=Sağlık
+25 Kasım'da kirayı öde	tarih=2026-11-25; saat=-; kat=Para
+1 Aralık'ta sigortayı yenile	tarih=2026-12-01; saat=-; kat=Para
+25 Ekim'de doğum günü hediyesi al	tarih=2027-10-25; saat=-
+15 Ocak'ta vergiyi öde	tarih=2027-01-15; saat=-; kat=Para
+3 Kasım saat 14:00'te toplantıya katıl	tarih=2026-11-03; saat=14:00; kat=İş
+ayın 1'inde kirayı öde	tarih=2026-11-01; saat=-; kat=Para
+ayın 28'inde aidatı öde	tarih=2026-10-28; saat=-; kat=Para
+ayın 15'inde kredi kartını öde	tarih=2026-11-15; saat=-; kat=Para
+ayın 30'unda maaşı kontrol et	tarih=2026-10-30; saat=-; kat=Para
+12 Kasım'a kadar projeyi teslim et	tarih=2026-11-12; saat=-; kat=İş; son=1
+20 Aralık'ta Ahmet'in düğününe git	tarih=2026-12-20; saat=-; kisi=Ahmet
+saat 11'de Ahmet'i ara	tarih=2026-10-26; saat=11:00; kisi=Ahmet
+saat 9'da bankayı ara	tarih=2026-10-27; saat=09:00; kat=Para
+3'te müşteriyi ara	tarih=2026-10-26; saat=15:00; kat=İş
+15:30'da toplantıya katıl	tarih=2026-10-26; saat=15:30; kat=İş
+üç buçukta eczaneye uğra	tarih=2026-10-26; saat=15:30; kat=Sağlık
+dörtte çocukları okuldan al	tarih=2026-10-26; saat=16:00
+akşam süt almam lazım	tarih=2026-10-26; saat=19:00; kat=Alışveriş
+öğlen Fatma hanımı ara	tarih=2026-10-26; saat=12:00; kisi=Fatma hanım
+gece 12'de ilacı içmeyi unutma	tarih=2026-10-27; saat=00:00; kat=Sağlık
+sabah 8'de spora git	tarih=2026-10-27; saat=08:00; kat=Sağlık
+akşam 7'de yemek yap	tarih=2026-10-26; saat=19:00
+öğleden sonra kargoyu gönder	tarih=2026-10-26; saat=15:00
+saat 2'de kuaföre git	tarih=2026-10-26; saat=14:00
+saat beşte toplantı var unutma	tarih=2026-10-26; saat=17:00; kat=İş
+altıda ekmek al	tarih=2026-10-26; saat=18:00; kat=Alışveriş
+on birde Mehmet abiyi ara	tarih=2026-10-26; saat=11:00; kisi=Mehmet abi
+yarın 10:30'da diş hekimine git	tarih=2026-10-27; saat=10:30; kat=Sağlık
+yarın saat 4'te Ayşe'yi ara	tarih=2026-10-27; saat=16:00; kisi=Ayşe
+yarın sabah 7'de uçağa yetiş, taksiyi ayarla	tarih=2026-10-27; saat=07:00
+yarın akşam 9'da annemi ara	tarih=2026-10-27; saat=21:00
+yarın iki buçukta noterden randevu al	tarih=2026-10-27; saat=14:30
+yarın on ikide toplantı var unutma	tarih=2026-10-27; saat=12:00; kat=İş
+perşembe sabah 10'da müşteri gelecek, sunumu hazırla	tarih=2026-10-29; saat=10:00; kat=İş
+bugün saat 6'da kombiciyi ara	tarih=2026-10-26; saat=18:00; kat=Ev
+bugün 17:45'te çocukları kurstan al	tarih=2026-10-26; saat=17:45
+Ahmet'i ara	tarih=-; saat=-; kisi=Ahmet
+faturayı öde	tarih=-; saat=-; kat=Para
+süt, ekmek ve yumurta al	tarih=-; saat=-; kat=Alışveriş; n=1
+markete gitmem lazım	tarih=-; saat=-; kat=Alışveriş
+kombiyi tamir ettirmem lazım	tarih=-; saat=-; kat=Ev
+doktordan randevu almalıyım	tarih=-; saat=-; kat=Sağlık
+raporu yazmam gerek	tarih=-; saat=-; kat=İş
+Ayşe'ye kitabı götür	tarih=-; saat=-; kisi=Ayşe
+Kemal bey'e teklifi gönder	tarih=-; saat=-; kisi=Kemal bey; kat=İş
+Ali hocaya ödevi sor	tarih=-; saat=-; kisi=Ali hoca
+Zeynep ablayı arayacağım	tarih=-; saat=-; kisi=Zeynep abla
+banyodaki musluğu değiştir	tarih=-; saat=-; kat=Ev
+ilaçları eczaneden al	tarih=-; saat=-; kat=Sağlık
+elektrik faturasını ödemeyi unutma	tarih=-; saat=-; kat=Para
+deterjan ve şampuan al	tarih=-; saat=-; kat=Alışveriş
+müşteriye e-posta gönder	tarih=-; saat=-; kat=İş
+bulaşık makinesini çalıştırmam lazım	tarih=-; saat=-; kat=Ev
+tansiyon ilacını yazdırmam lazım	tarih=-; saat=-; kat=Sağlık
+kira sözleşmesini yenile	tarih=-; saat=-; kat=Para
+Mehmet'e borcumu öde	tarih=-; saat=-; kisi=Mehmet; kat=Para
+acil Ahmet'i ara	tarih=-; saat=-; onc=1; kisi=Ahmet
+mutlaka faturayı öde	tarih=-; saat=-; onc=1; kat=Para
+hemen bankayı ara	tarih=-; saat=-; onc=1; kat=Para
+önemli: müşteriye teklif gönder	tarih=-; saat=-; onc=1; kat=İş
+bugün kesinlikle kirayı öde	tarih=2026-10-26; saat=-; onc=1; kat=Para
+yarın mutlaka doktora git	tarih=2026-10-27; saat=-; onc=1; kat=Sağlık
+acelesi yok, bir ara kitapçıya uğra	tarih=-; saat=-; onc=3
+fırsat olursa garajı temizle	tarih=-; saat=-; onc=3
+boş vakitte perdeleri yıka	tarih=-; saat=-; onc=3; kat=Ev
+önemli değil ama ampulü değiştir	tarih=-; saat=-; onc=3; kat=Ev
+vakit olursa kitap oku	tarih=-; saat=-; onc=3
+haftaya ilaç al	tarih=2026-11-02; saat=-; onc=2; kat=Sağlık
+30 Kasım'da sigortayı yenile	tarih=2026-11-30; saat=-; onc=2; kat=Para
+unutma yarın kirayı öde	tarih=2026-10-27; saat=-; onc=1; kat=Para
+her ayın 1'inde kirayı öde	tarih=2026-11-01; saat=-; tekrar=M:1; kat=Para
+her ayın 15'inde aidatı öde	tarih=2026-11-15; saat=-; tekrar=M:15; kat=Para
+her gün ilacımı içmem lazım	tarih=2026-10-26; saat=-; tekrar=D; kat=Sağlık
+her sabah tansiyonumu ölçmeyi hatırlat	tarih=2026-10-27; saat=09:00; tekrar=D; kat=Sağlık
+her akşam çöpü çıkar	tarih=2026-10-26; saat=19:00; tekrar=D; kat=Ev
+her pazartesi raporu gönder	tarih=2026-10-26; saat=-; tekrar=W:1; kat=İş
+her cuma annemi ara	tarih=2026-10-30; saat=-; tekrar=W:5
+her hafta çamaşırları yıka	tarih=2026-10-26; saat=-; tekrar=W:1; kat=Ev
+her çarşamba saat 8'de spora git	tarih=2026-10-28; saat=08:00; tekrar=W:3; kat=Sağlık
+her ay kredi kartı borcunu öde	tarih=2026-10-26; saat=-; tekrar=M:26; kat=Para
+hergün vitamin al	tarih=2026-10-26; saat=-; tekrar=D; kat=Sağlık
+her perşembe sabah toplantıya katıl	tarih=2026-10-29; saat=09:00; tekrar=W:4; kat=İş
+yarın Ahmet'i ara ve faturayı öde	tarih=2026-10-27; saat=-; n=2; kisi=Ahmet
+markete git, sonra eczaneye uğra	tarih=-; saat=-; n=2; kat=Alışveriş
+Ayşe'yi ara, ona kitabı götür	tarih=-; saat=-; n=2; kisi=Ayşe
+bugün kirayı öde ve akşam süt al	tarih=2026-10-26; saat=-; n=2; kat=Para
+raporu bitir sonra müdüre gönder	tarih=-; saat=-; n=2; kat=İş
+Ahmet ve Ayşe'yi ara	tarih=-; saat=-; n=1
+yarın sabah bankaya git, öğleden sonra müşteriyi ara	tarih=2026-10-27; saat=09:00; n=2; kat=Para
+cuma kombiciyi ara, cumartesi halıları yıkat	tarih=2026-10-30; saat=-; n=2; kat=Ev
+perşembe 3'te Ahmet'i ara ve teklifi gönder	tarih=2026-10-29; saat=15:00; n=2; kisi=Ahmet
+süt al, ekmek al, faturayı öde	tarih=-; saat=-; n=3
+yarın annemi aramalıyım	tarih=2026-10-27; saat=-
+cuma günü bankaya gideceğim	tarih=2026-10-30; saat=-; kat=Para
+haftaya kuaföre gitmem gerek	tarih=2026-11-02; saat=-
+yarın faturayı ödeyeceğim	tarih=2026-10-27; saat=-; kat=Para
+raporu yazmalıyım	tarih=-; saat=-; kat=İş
+bugün akşam yemek yapmam lazım	tarih=2026-10-26; saat=19:00
+yarın 9'da kargoyu almam lazım	tarih=2026-10-27; saat=09:00
+yarın sabah 9'da kargoyu almam lazım	tarih=2026-10-27; saat=09:00
+bana yarın Ahmet'i aramayı hatırlat	tarih=2026-10-27; saat=-; kisi=Ahmet
+unutmayayım, cuma kirayı öde	tarih=2026-10-30; saat=-; kat=Para
+yarın Ankara'ya git	tarih=2026-10-27; saat=-
+Migros'tan süt al	tarih=-; saat=-; kat=Alışveriş
+İstanbul'daki ofisi ara	tarih=-; saat=-; kat=İş
+cuma İzmir'e bilet al	tarih=2026-10-30; saat=-
+Aklıma bir uygulama fikri geldi, sesli alışveriş listesi	n=0; kat=Fikir
+Bugün hava çok güzeldi	n=0
+Belki seneye kendi işimi kurarım, bunu düşün	n=0; kat=Fikir
+Toplantıda müşteri fiyatı yüksek buldu	n=0; kat=İş
+Kitap fikri: köy hayatı üzerine bir roman	n=0; kat=Fikir
+Ahmet yeni eve taşınmış	n=0
+Doktor tansiyonumun normal olduğunu söyledi	n=0; kat=Sağlık
+Kira bu ay 15 bin lira oldu	n=0; kat=Para
+Markette domates çok pahalıydı	n=0; kat=Alışveriş
+Yeni bir girişim fikri: mahalle kütüphanesi	n=0; kat=Fikir
+Ahmet'i aradım	bitti=1; n=0
+faturayı ödedim	bitti=1; n=0
+kirayı yatırdım	bitti=1; n=0
+markete gittim	bitti=1; n=0
+raporu gönderdim	bitti=1; n=0
+ilacımı içtim	bitti=1; n=0
+Ayşe'ye kitabı götürdüm	bitti=1; n=0
+doktordan randevu aldım	bitti=1; n=0
+kombiciyi aradım hallettim	bitti=1; n=0
+sunumu bitirdim	bitti=1; n=0
+teklifi müşteriye yolladım	bitti=1; n=0
+Mehmet abiyle konuştum	bitti=1; n=0
+aidatı ödedim, makbuzu da aldım	bitti=1; n=0
+bankaya gittim ama kapalıydı	bitti=1; n=0
+ekmek aldım	bitti=1; n=0
+Ahmet'i aradım, yarın tekrar arayacağım	tarih=2026-10-27; saat=-; bitti=1; n=1
+faturayı ödedim, şimdi kirayı da ödemem lazım	tarih=-; saat=-; bitti=1; n=1; kat=Para
+bugün öğleden sonra 3'te kargocu gelecek, evde ol	tarih=2026-10-26; saat=15:00
+yarın 08:15'te servise bin	tarih=2026-10-27; saat=08:15
+öbür gün akşam 6'da veli toplantısına git	tarih=2026-10-28; saat=18:00
+cuma sabah 10:30'da sunum yap	tarih=2026-10-30; saat=10:30; kat=İş
+pazar akşam valizi hazırla	tarih=2026-11-01; saat=19:00
+salı 9'da tesisatçı gelecek, evde olmam lazım	tarih=2026-10-27; saat=09:00
+çarşamba saat 9'da tesisatçı gelecek, evde olmam lazım	tarih=2026-10-28; saat=09:00
+haftaya çarşamba 2'de dişçiye git	tarih=2026-11-04; saat=14:00; kat=Sağlık
+4 Kasım'da 10:00'da mülakata git	tarih=2026-11-04; saat=10:00
+ayın 5'inde saat 3'te bankaya uğra	tarih=2026-11-05; saat=15:00; kat=Para
+10 gün sonra vize başvurusunu yap	tarih=2026-11-05; saat=-
+2 hafta sonra kontrole git	tarih=2026-11-09; saat=-; kat=Sağlık
+yarına kadar teklifi hazırla	tarih=2026-10-27; saat=-; son=1; kat=İş
+bugüne kadar dilekçeyi ver	tarih=2026-10-26; saat=-; son=1
+cuma akşamına kadar raporu bitir	tarih=2026-10-30; saat=19:00; son=1; kat=İş
+yarın gece yarısından önce başvuruyu gönder	tarih=2026-10-27; saat=22:00
+saat yedide Burak'ı ara	tarih=2026-10-26; saat=19:00; kisi=Burak
+sabah yedide kalkıp koşuya git	tarih=2026-10-27; saat=07:00
+akşam sekizde Elif'le buluş	tarih=2026-10-26; saat=20:00; kisi=Elif
+öğlen 1'de yemek molasında bankaya git	tarih=2026-10-26; saat=13:00; kat=Para
+gece 2'de ilacı ver	tarih=2026-10-27; saat=02:00; kat=Sağlık

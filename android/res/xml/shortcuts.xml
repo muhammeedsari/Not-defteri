@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="record"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/record">
+        <intent
+            android:action="app.notdefteri.RECORD"
+            android:targetPackage="app.notdefteri"
+            android:targetClass="app.notdefteri.MainActivity" />
+    </shortcut>
+</shortcuts>

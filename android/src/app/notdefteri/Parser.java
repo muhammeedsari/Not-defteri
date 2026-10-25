@@ -33,6 +33,7 @@ final class Parser {
         String person, recurrence;
         int category = DIGER;
         double dateConf = 1, personConf = 1, catConf = 0.5, prioConf = 0.8;
+        double priorityConf() { return prioConf; }
     }
 
     /** A "done" sentence ("Ahmet'i aradım"): the verb stem and the other words, for {@link #match}. */

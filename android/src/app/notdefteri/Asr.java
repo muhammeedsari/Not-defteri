@@ -92,6 +92,8 @@ final class Asr {
             decode(f, tr, id);
             String text = tr.finish();
             Db.get(c).setTranscript(id, text);
+            // tasks and the confirmation card, before the page hears of it; a fault there keeps the text as a plain note
+            if (!text.trim().isEmpty()) { try { Brain.process(c, id); } catch (Throwable ignored) { } }
             notifyNote(id, "done", 1, text);
         } catch (Throwable e) {
             tr.finish();

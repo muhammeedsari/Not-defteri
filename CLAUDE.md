@@ -8,7 +8,7 @@ Bu dosyayı her oturumun başında oku. Ayrıntılar: `docs/PLAN.md` (ürün ve 
 - **Arayüz:** tek sayfalık HTML/CSS/vanilla JS, Android WebView içinde (`web/index.html`). Çerçeve yok. Sadece Türkçe.
 - **Yerel katman:** Java 8 (lambda/method reference YOK — dalvik-exchange min-sdk 24 ile derlenir), `android/src/app/notdefteri/`.
 - **Derleme:** Gradle YOK. `android/build_apk.py`: aapt → javac (-source 8, android-34.jar) → dalvik-exchange → aapt add → zipalign → apksigner.
-- **Sürüm:** şu an **0.3** (versionCode 3). minSdk 24, targetSdk 34. Paket adı `app.notdefteri`.
+- **Sürüm:** şu an **0.9** (versionCode 4; v1 kabul ölçütleri telefonda sağlanınca 1.0). minSdk 24, targetSdk 34. Paket adı `app.notdefteri`.
 
 ## Kullanıcıyla çalışma kuralları (plan 12. bölüm, kesin)
 - Kullanıcıyla **Türkçe** konuş; teknik olmayan, kısa ve net anlat.
@@ -45,3 +45,8 @@ ND_KS=/yol/not-defteri-imza.p12 ND_KS_PASS=… python3 android/build_apk.py   # 
 - `Asr.java`: yazıya çevirme kuyruğu (tek iş parçacığı) + model indirme; olaylar JS'ye `__ndAsr(id, state, p, text)` ve `__ndModel(state, p, err)` ile gider. Köprü: `asrStatus()`, `asrDownload()`, `asrCancel()`. `Transcriber.java` (VAD + Whisper, `tr`), `AsrModels.java` (yalnızca base; small v2'de).
 - `com/k2fsa/sherpa/onnx/`: sherpa-onnx JNI'sinin alan adlarını okuduğu Java sınıfları; değiştirme, alan silme.
 - `RecordService.java`: kayıt sürerken ön plan servisi (mikrofon türü).
+- `Parser.java`: saf Java kural motoru (Android import'u yok; `tests/run_parser.sh` masaüstünde çalıştırır, yalnızca "test et" denince). Tekrar kuralı: `D`, `W:1..7` (1 = pazartesi), `M:gün`.
+- `Brain.java`: not → ayrıştırma → "gelen" görevler + `notes.review` (onay kartı); `save` kartın cevabını işler, düzeltmeleri `learning_events`'e yazar. `Asr` yazıya çevirince `Brain.process` çağırır.
+- `Tasks.java`: görevi değiştiren her şey (bitti, ertele, sil, geri al, böl, kaydet, hatırlatma kurma, `restoreAll`). Değişince `Tasks.changed` → widget + sayfada `__ndRefresh()`.
+- `Alarms`/`AlarmReceiver`/`Notify`: AlarmManager (görev başına bir alarm + sabah özeti), bildirim düğmeleri, açılış/güncelleme/saat değişiminde yeniden kurma. `Widget`, `RecordTile` (Hızlı Ayarlar), `res/xml/shortcuts.xml`. `Backup.java`: zip dışa/içe aktarma (SAF), günlük otomatik JSON.
+- Sayfa olayları ayrıca: `__ndRefresh()`, `__ndRecord(locked)`, `__ndOpen(taskId)`, `__ndBackup(kind, ok, err)`.

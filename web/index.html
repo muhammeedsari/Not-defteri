@@ -7,58 +7,111 @@
 <style>
 :root{
   --bg:#f3f1ec;--card:#fff;--ink:#1d2230;--soft:#5d6475;--line:#e3e0d8;
-  --accent:#2f4a9e;--accent-ink:#fff;--rec:#d64545;--warn:#b7791f;
+  --accent:#2f4a9e;--accent-ink:#fff;--rec:#d64545;--warn:#b7791f;--ok:#2f8a57;--low:#fff4dc;
   --r:16px;color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#121418;--card:#1c1f26;--ink:#e9ebf1;--soft:#9aa1b2;--line:#2a2e37;
-  --accent:#8fa6f0;--accent-ink:#121418;--rec:#ef6b6b;--warn:#e0a84a;color-scheme:dark;
+  --accent:#8fa6f0;--accent-ink:#121418;--rec:#ef6b6b;--warn:#e0a84a;--ok:#5cc28a;--low:#3a2f17;color-scheme:dark;
 }}
 :root[data-theme="dark"]{
   --bg:#121418;--card:#1c1f26;--ink:#e9ebf1;--soft:#9aa1b2;--line:#2a2e37;
-  --accent:#8fa6f0;--accent-ink:#121418;--rec:#ef6b6b;--warn:#e0a84a;color-scheme:dark;
+  --accent:#8fa6f0;--accent-ink:#121418;--rec:#ef6b6b;--warn:#e0a84a;--ok:#5cc28a;--low:#3a2f17;color-scheme:dark;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   -webkit-user-select:none;user-select:none;overflow-x:hidden}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;min-height:44px;-webkit-user-select:text;user-select:text}
+textarea{min-height:110px;resize:vertical}
 [hidden]{display:none!important}
-main{padding:calc(env(safe-area-inset-top,0px) + 20px) 16px 140px;max-width:640px;margin:0 auto}
+main{padding:calc(env(safe-area-inset-top,0px) + 18px) 16px 140px;max-width:640px;margin:0 auto}
+header{display:flex;align-items:flex-start;gap:8px}
+header div{flex:1}
 header h1{margin:0;font-size:30px;letter-spacing:-.5px}
 header p{margin:2px 0 0;color:var(--soft)}
-h2{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--soft);margin:28px 0 8px;font-weight:600}
+.ico{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--soft);flex:none}
+.tabs{display:flex;gap:6px;margin:14px 0 4px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px}
+.tabs button{flex:1;min-height:40px;border-radius:10px;font-weight:600;color:var(--soft)}
+.tabs button.on{background:var(--accent);color:var(--accent-ink)}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--soft);margin:26px 0 8px;font-weight:600;display:flex;gap:6px}
+h2.late{color:var(--rec)}
+h3.cat{font-size:14px;margin:14px 0 6px;color:var(--soft);font-weight:600}
 .empty{margin-top:56px;text-align:center;color:var(--soft)}
 .empty b{display:block;color:var(--ink);font-size:18px;margin-bottom:4px}
 .list{display:flex;flex-direction:column;gap:8px}
 .row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:var(--r);padding:10px 12px;border:1px solid var(--line)}
-.row .play{width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.row.high{border-left:4px solid var(--rec)}
+.row .play,.row .chk{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none}
+.row .play{background:var(--accent);color:var(--accent-ink)}
+.row .chk{border:2px solid var(--line);color:transparent}
+.row .chk:active,.row .chk.on{border-color:var(--ok);color:var(--ok)}
 .row .meta{flex:1;min-width:0}
 .row .meta b{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-weight:600}
 .row .meta b.wait{font-weight:500;color:var(--soft)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:20px}
+.row .meta span{color:var(--soft);font-size:14px}
+.row .meta span.late{color:var(--rec)}
+.row.done .meta b{font-weight:500;text-decoration:line-through;color:var(--soft)}
+.row .side{color:var(--accent);font-weight:600;font-size:14px;padding:8px;flex:none}
+.ask{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px}
+.ask .row{border:0;padding:0}
+.ask p{margin:8px 0;font-size:14px;color:var(--soft)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{min-height:36px;padding:0 14px;border-radius:18px;background:var(--bg);border:1px solid var(--line);font-size:14px;font-weight:600}
+.chip.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chip.red{color:var(--rec)}
+.scroll{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;margin-top:10px}
+.scroll .chip{flex:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:18px}
 .card p{margin:0 0 12px;color:var(--soft)}
 .card b{color:var(--ink)}
 .bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin:4px 0 12px}
 .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
-.row .meta span{color:var(--soft);font-size:14px}
 .row .del{width:40px;height:40px;display:grid;place-items:center;color:var(--soft);flex:none}
 svg{width:22px;height:22px;fill:currentColor}
+details summary{list-style:none;color:var(--accent);font-weight:600;padding:12px 0;cursor:pointer}
+details summary::-webkit-details-marker{display:none}
 /* record button */
-.dock{position:fixed;left:0;right:0;bottom:0;padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 22px);display:flex;justify-content:center;
+.dock{position:fixed;left:0;right:0;bottom:0;padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 22px);display:flex;justify-content:center;align-items:center;gap:22px;
   background:linear-gradient(to top,var(--bg) 60%,transparent)}
 .mic{width:76px;height:76px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;
   box-shadow:0 6px 20px rgba(47,74,158,.35)}
 .mic svg{width:34px;height:34px}
 .mic:active{transform:scale(.96)}
+.dock .ico{background:var(--card);border:1px solid var(--line)}
+.dock .ghost{width:44px}
 /* sheets */
 .veil{position:fixed;inset:0;background:rgba(10,12,18,.45);display:flex;align-items:flex-end;justify-content:center;z-index:5}
-.sheet{width:100%;max-width:640px;background:var(--card);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px) + 22px)}
+.sheet{width:100%;max-width:640px;max-height:92vh;overflow-y:auto;background:var(--card);border-radius:22px 22px 0 0;padding:22px 16px calc(env(safe-area-inset-bottom,0px) + 22px)}
 .sheet h3{margin:0 0 6px;font-size:20px}
 .sheet p{margin:0 0 16px;color:var(--soft)}
-.btns{display:flex;gap:10px}
-.btn{flex:1;min-height:48px;border-radius:14px;background:var(--bg);font-weight:600}
+.sheet .quote{background:var(--bg);border-radius:12px;padding:10px 12px;color:var(--ink);font-style:italic}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn{flex:1;min-height:48px;border-radius:14px;background:var(--bg);font-weight:600;padding:0 12px}
 .btn.pri{background:var(--accent);color:var(--accent-ink)}
 .btn.red{background:var(--rec);color:#fff}
+.btn.link{flex:none;background:none;color:var(--accent);min-height:40px}
+.col{display:flex;flex-direction:column;gap:8px}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.f label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--soft)}
+.f label.w{grid-column:1/-1}
+.f .low input,.f .low select,input.low{background:var(--low);border-color:var(--warn)}
+.task{border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:12px;position:relative}
+.task.gone{opacity:.45}
+.task.gone .f{display:none}
+.task .x{position:absolute;top:6px;right:6px}
+.task .t{font-weight:600;padding-right:44px}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;min-height:40px;border-radius:10px;background:var(--bg);font-size:14px;font-weight:600}
+.seg button.on{background:var(--accent);color:var(--accent-ink)}
+.opt{display:flex;align-items:center;gap:10px;padding:10px 0;font-weight:500}
+.opt input{width:22px;height:22px;min-height:0;flex:none;accent-color:var(--accent)}
+.set{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.set:last-child{border:0}
+.set div{flex:1}
+.set div span{display:block;color:var(--soft);font-size:14px}
+.set input{width:auto;min-width:110px}
+.ok{color:var(--ok);font-weight:600}
 /* recording */
 #rec{position:fixed;inset:0;background:var(--bg);z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:24px 16px calc(env(safe-area-inset-bottom,0px) + 28px)}
@@ -74,37 +127,46 @@ svg{width:22px;height:22px;fill:currentColor}
 .round{width:60px;height:60px;border-radius:50%;background:var(--card);border:1px solid var(--line);display:grid;place-items:center}
 .round.big{width:84px;height:84px;background:var(--accent);color:var(--accent-ink);border:0}
 .round.big svg{width:38px;height:38px}
-.round small{display:block}
 .lab{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;color:var(--soft)}
+body.locked main,body.locked .dock{display:none}
 #toast{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 120px);margin:0 auto;max-width:420px;
-  background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:14px;text-align:center;z-index:9;
+  background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:14px;z-index:9;display:flex;align-items:center;gap:12px;
   transition:opacity .25s,transform .25s;opacity:0;transform:translateY(8px);pointer-events:none}
-#toast.on{opacity:1;transform:none}
+#toast span{flex:1;text-align:center}
+#toast button{color:var(--bg);font-weight:700;text-decoration:underline}
+#toast.on{opacity:1;transform:none;pointer-events:auto}
 </style>
 </head>
 <body>
 <main>
   <header>
-    <h1>Bugün</h1>
-    <p id="today"></p>
+    <div><h1 id="title">Bugün</h1><p id="today"></p></div>
+    <button class="ico" id="setBtn" aria-label="Ayarlar"><svg viewBox="0 0 24 24"><path d="M19.4 13a7.7 7.7 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.3 7.3 0 0 0-1.7-1L15 3h-4l-.4 2.9a7.3 7.3 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.7 7.7 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.3 7.3 0 0 0 1.7 1L11 21h4l.4-2.9a7.3 7.3 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg></button>
   </header>
-
-  <div id="empty" class="empty">
-    <b>Henüz not yok</b>
-    Aklındakini söylemek için alttaki düğmeye bas.
-  </div>
+  <nav class="tabs" id="tabs">
+    <button data-v="today" class="on">Bugün</button><button data-v="notes">Notlar</button><button data-v="done">Bitenler</button>
+  </nav>
 
   <div id="model" class="card" hidden></div>
 
-  <section id="notesBox" hidden>
-    <h2>Notlar</h2>
-    <div id="notes" class="list"></div>
+  <section id="vToday"></section>
+  <section id="vNotes" hidden>
+    <input id="q" type="search" placeholder="Notlarda ara" style="margin-top:12px">
+    <div class="chips scroll" id="catChips"></div>
+    <div class="chips scroll" id="filChips"></div>
+    <div id="notesList" class="list" style="margin-top:12px"></div>
   </section>
+  <section id="vDone" hidden></section>
+  <section id="vSet" hidden></section>
 </main>
 
-<div class="dock"><button class="mic" id="micBtn" aria-label="Kayda başla">
-  <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11z"/></svg>
-</button></div>
+<div class="dock">
+  <button class="ico" id="typeBtn" aria-label="Yazarak not al"><svg viewBox="0 0 24 24"><path d="M20 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-9 3h2v2h-2zm0 3h2v2h-2zM8 8h2v2H8zm0 3h2v2H8zm-1 2H5v-2h2zm0-3H5V8h2zm9 7H8v-2h8zm0-4h-2v-2h2zm0-3h-2V8h2zm3 3h-2v-2h2zm0-3h-2V8h2z"/></svg></button>
+  <button class="mic" id="micBtn" aria-label="Kayda başla">
+    <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11z"/></svg>
+  </button>
+  <span class="ghost"></span>
+</div>
 
 <div id="rec" hidden>
   <div class="top">
@@ -121,54 +183,100 @@ svg{width:22px;height:22px;fill:currentColor}
 </div>
 
 <div id="veil" class="veil" hidden><div class="sheet" id="sheet"></div></div>
-<div id="toast"></div>
+<div id="toast"><span></span><button hidden></button></div>
 
 <script>
 'use strict';
 const AND = window.NotDefteriAndroid || null;
 const $ = s => document.querySelector(s);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const J = (f, def) => { try { const v = AND ? JSON.parse(f()) : def; return v == null ? def : v; } catch (e) { return def; } };
 const MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
 const DAYS = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+const DAY = 86400000;
 const ICON_PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
 const ICON_STOP = '<svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>';
 const ICON_DEL = '<svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z"/></svg>';
+const ICON_CHK = '<svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>';
+const ICON_X = '<svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"/></svg>';
+const PRIO = {1: 'Yüksek', 2: 'Normal', 3: 'Düşük'};
 
-function caps() { try { return AND ? JSON.parse(AND.caps()) : {}; } catch (e) { return {}; } }
-function fmtDur(ms) { const s = Math.round(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
-function fmtWhen(ms) {
-  const d = new Date(ms), now = new Date();
-  const y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-  const day = d.toDateString() === now.toDateString() ? 'Bugün' : d.toDateString() === y.toDateString() ? 'Dün' : d.getDate() + ' ' + MONTHS[d.getMonth()];
-  return day + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+function caps() { return J(() => AND.caps(), {}); }
+const p2 = n => String(n).padStart(2, '0');
+function fmtDur(ms) { const s = Math.round(ms / 1000); return Math.floor(s / 60) + ':' + p2(s % 60); }
+function dayStart(ms) { const d = new Date(ms); d.setHours(0, 0, 0, 0); return d.getTime(); }
+function hm(ms) { const d = new Date(ms); return p2(d.getHours()) + ':' + p2(d.getMinutes()); }
+function dayName(ms) {
+  const t = dayStart(Date.now()), d = dayStart(ms), k = Math.round((d - t) / DAY), x = new Date(ms);
+  if (k === 0) return 'Bugün';
+  if (k === 1) return 'Yarın';
+  if (k === -1) return 'Dün';
+  if (k > 1 && k < 7) return DAYS[x.getDay()];
+  return x.getDate() + ' ' + MONTHS[x.getMonth()] + (x.getFullYear() !== new Date().getFullYear() ? ' ' + x.getFullYear() : '');
+}
+function fmtWhen(ms) { return dayName(ms) + ' ' + hm(ms); }
+function fmtDue(t) { return t.due == null ? '' : dayName(t.due) + (t.hasTime ? ' ' + hm(t.due) : ''); }
+function recLabel(r) {
+  if (!r) return '';
+  if (r === 'D') return 'Her gün';
+  if (r.startsWith('W:')) return 'Her ' + DAYS[(+r.slice(2)) % 7].toLowerCase();
+  if (r.startsWith('M:')) return 'Her ayın ' + r.slice(2) + '. günü';
+  return '';
 }
 let toastT;
-function toast(msg) {
-  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
-  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2600);
+function toast(msg, act, fn) {
+  const t = $('#toast'), b = t.querySelector('button');
+  t.querySelector('span').textContent = msg;
+  b.hidden = !act; b.textContent = act || ''; b.onclick = () => { t.classList.remove('on'); fn && fn(); };
+  t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), act ? 5000 : 2600);
 }
 
 /* ---------- sheet (in-page dialogs; the back button closes them) ---------- */
 let sheetClose = null;
 function sheet(html, onClose) {
-  $('#sheet').innerHTML = html; $('#veil').hidden = false; sheetClose = onClose || null;
+  $('#sheet').innerHTML = html; $('#veil').hidden = false; $('#sheet').scrollTop = 0; sheetClose = onClose || null;
 }
 function closeSheet() { $('#veil').hidden = true; const f = sheetClose; sheetClose = null; if (f) f(); }
+function dropSheet() { sheetClose = null; closeSheet(); }   // closes without the "closed" action
 $('#veil').addEventListener('click', e => { if (e.target.id === 'veil') closeSheet(); });
-
-/* ---------- Today ---------- */
-function renderToday() {
-  const d = new Date();
-  $('#today').textContent = d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + DAYS[d.getDay()];
+function ask(title, text, yes, fn, red) {
+  sheet(`<h3>${esc(title)}</h3><p>${esc(text)}</p><div class="btns"><button class="btn" id="no">Vazgeç</button><button class="btn ${red ? 'red' : 'pri'}" id="yes">${esc(yes)}</button></div>`);
+  $('#no').onclick = closeSheet;
+  $('#yes').onclick = () => { dropSheet(); fn(); };
 }
 
-/* Notes (plan 7: notes without tasks, newest first; grouping by category arrives with the Today screen, step 8) */
-const audio = new Audio();
-let playing = null, NOTES = [];
-audio.addEventListener('ended', () => { playing = null; renderNotes(); });
-/* Speech-to-text state: text undefined = waiting, "" = no speech found */
-const ASR = { status: {}, live: {}, offered: false };
-function asrStatus() { try { ASR.status = AND ? JSON.parse(AND.asrStatus()) : {}; } catch (e) { ASR.status = {}; } return ASR.status; }
+/* ---------- views ---------- */
+let VIEW = 'today', PREV = 'today', CATS = [];
+function show(v) {
+  if (v === 'set' && VIEW !== 'set') PREV = VIEW;
+  VIEW = v;
+  for (const x of ['today', 'notes', 'done', 'set']) $('#v' + x[0].toUpperCase() + x.slice(1)).hidden = x !== v;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  $('#tabs').hidden = v === 'set';
+  $('#title').textContent = {today: 'Bugün', notes: 'Notlar', done: 'Bitenler', set: 'Ayarlar'}[v];
+  window.scrollTo(0, 0);
+  render();
+}
+$('#tabs').onclick = e => { const b = e.target.closest('button'); if (b) show(b.dataset.v); };
+$('#setBtn').onclick = () => show(VIEW === 'set' ? PREV : 'set');
+function render() {
+  const d = new Date();
+  $('#today').textContent = d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + DAYS[d.getDay()];
+  CATS = J(() => AND.categories(), []);
+  asrStatus();
+  if (VIEW === 'today') renderToday();
+  else if (VIEW === 'notes') renderNotes();
+  else if (VIEW === 'done') renderDone();
+  else renderSettings();
+  renderModel();
+}
+let refreshT;
+window.__ndRefresh = () => { clearTimeout(refreshT); refreshT = setTimeout(render, 120); };
+
+/* ---------- speech-to-text state: text undefined = waiting, "" = no speech found ---------- */
+const ASR = { status: {}, live: {}, offered: false, waiting: false };
+function asrStatus() { ASR.status = J(() => AND.asrStatus(), {}); return ASR.status; }
 function noteTitle(n) {
   if (n.text) return `<b>${esc(n.text)}</b>`;
   if (n.text === '') return '<b class="wait">Konuşma algılanmadı</b>';
@@ -177,9 +285,8 @@ function noteTitle(n) {
   return `<b class="wait">${ASR.status.ready ? 'Yazıya çevrilmeyi bekliyor' : 'Model indirilince yazıya çevrilecek'}</b>`;
 }
 function renderModel() {
-  const st = asrStatus(), box = $('#model');
-  const waiting = NOTES.some(n => n.text === undefined);
-  if (!AND || st.ready || st.libs === false || (!waiting && !st.downloading)) { box.hidden = true; return; }
+  const st = ASR.status, box = $('#model');
+  if (!AND || st.ready || st.libs === false || (!ASR.waiting && !st.downloading) || VIEW === 'set') { box.hidden = true; return; }
   box.hidden = false;
   if (st.downloading) {
     box.innerHTML = `<p><b>Türkçe ses modeli indiriliyor</b> · %${Math.round((st.p || 0) * 100)}</p>
@@ -190,82 +297,451 @@ function renderModel() {
       <div class="btns"><button class="btn pri" data-act="dl">${ASR.err ? 'Tekrar dene' : 'İndir'}</button></div>`;
   }
 }
+function download() { ASR.err = false; AND.asrDownload(); setTimeout(render, 100); }
 $('#model').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.act === 'dl') { ASR.err = false; AND.asrDownload(); setTimeout(renderModel, 100); }
+  if (b.dataset.act === 'dl') download();
   else if (b.dataset.act === 'cancel') AND.asrCancel();
 });
 window.__ndModel = (state, p, err) => {
   if (state === 'progress') {
-    const bar = $('#model .bar i'); if (!bar) { renderModel(); return; }
+    const bar = $('#model .bar i'); if (!bar) { render(); return; }
     bar.style.width = (p * 100) + '%'; $('#model p').innerHTML = `<b>Türkçe ses modeli indiriliyor</b> · %${Math.round(p * 100)}`;
-  } else if (state === 'done') { toast('Model indirildi; notların yazıya çevriliyor'); renderNotes(); }
+  } else if (state === 'done') { toast('Model indirildi; notların yazıya çevriliyor'); render(); }
   else if (state === 'error') {
     ASR.err = err !== 'cancel';
     if (ASR.err) toast(err && err.startsWith('load') ? 'Ses modeli açılamadı' : 'İndirilemedi; internet bağlantını kontrol edip tekrar dene');
-    renderNotes();
+    render();
   }
 };
 window.__ndAsr = (id, state, p, text) => {
   if (state === 'start' || state === 'progress') ASR.live[id] = p;
   else { delete ASR.live[id]; if (state === 'error') toast('Bir not yazıya çevrilemedi'); }
-  if (state === 'progress') {   // only the line changes; the list stays as it is
-    const row = document.querySelector(`.row[data-id="${id}"] .meta`);
-    const n = NOTES.find(x => x.id === id);
-    if (row && n) { row.firstElementChild.outerHTML = noteTitle(n); return; }
+  if (state === 'progress') {   // only the line changes
+    const b = document.querySelector(`.row[data-note="${id}"] .meta b`);
+    if (b) { b.textContent = 'Yazıya çevriliyor · %' + Math.round(p * 100); return; }
   }
-  renderNotes();
+  render();
+  if (state === 'done') nextCard();
 };
 
-function renderNotes() {
-  asrStatus();
-  try { NOTES = AND ? JSON.parse(AND.notes()) : []; } catch (e) { NOTES = []; }
-  $('#empty').hidden = NOTES.length > 0;
-  $('#notesBox').hidden = NOTES.length === 0;
-  $('#notes').innerHTML = NOTES.map(n => `<div class="row" data-id="${n.id}">
-    ${n.audio ? `<button class="play" data-act="play" aria-label="Dinle">${playing === n.id ? ICON_STOP : ICON_PLAY}</button>` : ''}
-    <div class="meta">${noteTitle(n)}<span>${esc(fmtWhen(n.at))}${n.ms ? ' · ' + fmtDur(n.ms) : ''}${n.cat ? ' · ' + esc(n.cat) : ''}</span></div>
-    <button class="del" data-act="del" aria-label="Sil">${ICON_DEL}</button></div>`).join('');
-  renderModel();
+/* ---------- rows ---------- */
+const audio = new Audio();
+let playing = null;
+audio.addEventListener('ended', () => { playing = null; render(); });
+function play(id, file) {
+  if (playing === id) { audio.pause(); playing = null; }
+  else { audio.src = '/__audio/' + encodeURIComponent(file); audio.play().catch(() => toast('Ses çalınamadı')); playing = id; }
+  render();
 }
-$('#notes').addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b) return;
-  const id = +b.closest('.row').dataset.id, n = NOTES.find(x => x.id === id);
-  if (!n) return;
-  if (b.dataset.act === 'play') {
-    if (playing === id) { audio.pause(); playing = null; }
-    else { audio.src = '/__audio/' + encodeURIComponent(n.audio); audio.play().catch(() => toast('Ses çalınamadı')); playing = id; }
-    renderNotes();
-  } else if (b.dataset.act === 'del') {
-    sheet(`<h3>Bu not silinsin mi?</h3><p>${esc(fmtWhen(n.at))} notu, sesiyle birlikte telefondan kalıcı olarak silinir.</p>
-      <div class="btns"><button class="btn" id="no">Vazgeç</button><button class="btn red" id="yes">Sil</button></div>`);
-    $('#no').onclick = closeSheet;
-    $('#yes').onclick = () => {
-      if (playing === id) { audio.pause(); playing = null; }
-      AND && AND.noteDelete(id); closeSheet(); renderNotes();
-    };
-  }
+function isLate(t) { return t.due != null && (t.hasTime ? t.due < Date.now() : t.due < dayStart(Date.now())); }
+function taskRow(t) {
+  const late = isLate(t);
+  const meta = [fmtDue(t), t.person, recLabel(t.rec), t.catName].filter(Boolean).map(esc).join(' · ');
+  return `<div class="row${t.prio === 1 ? ' high' : ''}" data-task="${t.id}">
+    <button class="chk" data-act="done" aria-label="Bitti">${ICON_CHK}</button>
+    <div class="meta" data-act="open"><b>${esc(t.title)}</b>${meta ? `<span class="${late ? 'late' : ''}">${meta}</span>` : ''}</div></div>`;
+}
+function noteRow(n) {
+  const meta = [fmtWhen(n.at), n.ms ? fmtDur(n.ms) : '', n.cat, n.tasks ? n.tasks + ' görev' : ''].filter(Boolean).map(esc).join(' · ');
+  return `<div class="row" data-note="${n.id}">
+    ${n.audio ? `<button class="play" data-act="play" aria-label="Dinle">${playing === n.id ? ICON_STOP : ICON_PLAY}</button>` : ''}
+    <div class="meta" data-act="note">${noteTitle(n)}<span>${meta}</span></div></div>`;
+}
+let TASKS = {}, NOTES = {};
+document.querySelector('main').addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const act = el.dataset.act, tr = el.closest('[data-task]'), nr = el.closest('[data-note]');
+  const id = +(tr ? tr.dataset.task : nr ? nr.dataset.note : el.dataset.id);
+  if (act === 'done') { el.classList.add('on'); done(id); }
+  else if (act === 'open') openTask(id);
+  else if (act === 'play') play(id, NOTES[id].audio);
+  else if (act === 'note') openNote(id);
+  else if (act === 'card') openCard(id);
+  else if (act === 'undo') { AND.taskUndo(id); toast('Geri alındı'); }
+  else if (act === 'tomorrow') { AND.taskSnooze(id, 'tomorrow', 0); toast('Yarına ertelendi'); }
+  else if (act === 'del') delTask(id);
+  else if (act === 'keep') { AND.taskKeep(id); toast('Tamam, duruyor'); }
+  else if (act === 'split') splitTask(id);
+  else if (act === 'goDone') show('done');
 });
+function done(id) {
+  setTimeout(() => { AND.taskDone(id); toast('Bitti · Bitenler\'e taşındı', 'Geri al', () => AND.taskUndo(id)); }, 180);
+}
+function delTask(id) {
+  AND.taskDelete(id); toast('Silindi', 'Geri al', () => AND.taskUndo(id));
+}
+
+/* ---------- Today (plan 7): late → today → next 7 days → later → undated; notes by category; done ---------- */
+function renderToday() {
+  const b = J(() => AND.board(), {open: [], done: [], notes: []});
+  TASKS = {}; NOTES = {};
+  const now = Date.now(), t0 = dayStart(now), t1 = t0 + DAY, t7 = t0 + 8 * DAY;
+  const byPrio = (a, c) => a.prio - c.prio || (a.due || 0) - (c.due || 0);
+  const byDate = (a, c) => a.due - c.due || a.prio - c.prio;
+  const late = [], today = [], soon = [], later = [], undated = [], review = {};
+  for (const t of b.open) {
+    TASKS[t.id] = t;
+    if (t.status === 'gelen') { review[t.note] = (review[t.note] || []).concat(t); continue; }
+    if (t.due == null) undated.push(t);
+    else if (isLate(t)) late.push(t);
+    else if (t.due < t1) today.push(t);
+    else if (t.due < t7) soon.push(t);
+    else later.push(t);
+  }
+  for (const n of b.notes) NOTES[n.id] = n;
+  ASR.waiting = b.notes.some(n => n.text === undefined);
+  let h = '';
+  const rv = Object.keys(review);
+  if (rv.length) h += `<h2>Onay bekleyen</h2><div class="list">${rv.map(n => `<div class="row"><div class="meta"><b>${esc(review[n].map(t => t.title).join(', '))}</b><span>${review[n].length} öneri</span></div><button class="side" data-act="card" data-id="${n}">Bak</button></div>`).join('')}</div>`;
+  if (late.length) h += `<h2 class="late">Gecikenler · ${late.length}</h2><div class="list">${late.sort(byDate).map(lateRow).join('')}</div>`;
+  if (today.length) h += `<h2>Bugün · ${today.length}</h2><div class="list">${today.sort(byPrio).map(taskRow).join('')}</div>`;
+  if (soon.length) h += `<h2>Yakında</h2><div class="list">${soon.sort(byDate).map(taskRow).join('')}</div>`;
+  if (later.length) h += `<h2>Daha sonra</h2><div class="list">${later.sort(byDate).map(taskRow).join('')}</div>`;
+  if (undated.length) h += `<h2>Tarihsiz</h2><div class="list">${undated.sort(byPrio).map(staleRow).join('')}</div>`;
+  if (b.notes.length) {
+    h += '<h2>Notlar</h2>';
+    const groups = {};
+    for (const n of b.notes) (groups[n.cat || 'Diğer'] = groups[n.cat || 'Diğer'] || []).push(n);
+    for (const c of CATS.map(c => c.name).concat(['Diğer'])) {
+      if (!groups[c]) continue;
+      h += `<h3 class="cat">${esc(c)}</h3><div class="list">${groups[c].map(noteRow).join('')}</div>`;
+      delete groups[c];
+    }
+  }
+  const doneToday = b.done.filter(t => t.doneAt >= t0).length;
+  if (b.done.length) h += `<h2>Bitenler</h2><div class="row"><div class="meta"><b>Bugün ${doneToday} görev bitti</b><span>Son 60 günde ${b.done.length}</span></div><button class="side" data-act="goDone">Gör</button></div>`;
+  if (!h) h = `<div class="empty"><b>Bugün için bir şey yok</b>Aklındakini söylemek için alttaki düğmeye bas.<br>Örnek: “Yarın saat 3'te Ahmet'i ara”</div>`;
+  $('#vToday').innerHTML = h;
+}
+/* "Hâlâ geçerli mi?" for late tasks; after 3 snoozes: split or delete (plan 3.B, 7) */
+function lateRow(t) {
+  const q = t.snoozes >= 3
+    ? `<p>${t.snoozes} kez ertelendi. Daha küçük parçalara bölelim mi, yoksa silelim mi?</p><div class="chips"><button class="chip" data-act="split">Böl</button><button class="chip" data-act="tomorrow">Yarına</button><button class="chip red" data-act="del">Sil</button></div>`
+    : `<p>Hâlâ geçerli mi?</p><div class="chips"><button class="chip" data-act="tomorrow">Evet, yarına</button><button class="chip" data-act="done">Bitti</button><button class="chip red" data-act="del">Sil</button></div>`;
+  return `<div class="ask" data-task="${t.id}">${taskRow(t)}${q}</div>`;
+}
+/* a low-priority task nobody touched for 30 days: ask once whether it still matters */
+function staleRow(t) {
+  if (t.prio !== 3 || !t.touched || Date.now() - t.touched < 30 * DAY) return taskRow(t);
+  return `<div class="ask" data-task="${t.id}">${taskRow(t)}<p>30 gündür duruyor. Hâlâ geçerli mi?</p><div class="chips"><button class="chip" data-act="keep">Evet</button><button class="chip red" data-act="del">Sil</button></div></div>`;
+}
+function splitTask(id) {
+  const t = TASKS[id] || J(() => AND.task(id), null); if (!t) return;
+  sheet(`<h3>Görevi böl</h3><p>Her satır ayrı bir görev olur; tarihi ve kategorisi aynı kalır.</p>
+    <textarea id="lines">${esc(t.title)}\n</textarea>
+    <div class="btns" style="margin-top:12px"><button class="btn" id="no">Vazgeç</button><button class="btn pri" id="yes">Böl</button></div>`);
+  $('#no').onclick = closeSheet;
+  $('#yes').onclick = () => {
+    const v = $('#lines').value.split('\n').map(s => s.trim()).filter(Boolean);
+    if (v.length < 2) { toast('En az iki satır yaz'); return; }
+    AND.taskSplit(id, v.join('\n')); dropSheet(); toast(v.length + ' göreve bölündü');
+  };
+}
+
+/* ---------- Notes screen: category, filter, search ---------- */
+const NF = { cat: 0, filter: 'all', q: '' };
+function renderNotes() {
+  $('#catChips').innerHTML = [{id: 0, name: 'Tümü'}].concat(CATS).map(c => `<button class="chip${NF.cat === c.id ? ' on' : ''}" data-cat="${c.id}">${esc(c.name)}</button>`).join('');
+  $('#filChips').innerHTML = [['all', 'Hepsi'], ['tasks', 'Görevli'], ['plain', 'Sadece not'], ['archived', 'Arşiv']]
+    .map(f => `<button class="chip${NF.filter === f[0] ? ' on' : ''}" data-fil="${f[0]}">${f[1]}</button>`).join('');
+  const list = J(() => AND.search(NF.cat, NF.filter, NF.q), []);
+  NOTES = {};
+  for (const n of list) NOTES[n.id] = n;
+  ASR.waiting = ASR.waiting || list.some(n => n.text === undefined);
+  $('#notesList').innerHTML = list.length ? list.map(noteRow).join('') : `<div class="empty"><b>Not bulunamadı</b>${NF.q ? 'Başka bir kelimeyle dene.' : ''}</div>`;
+}
+$('#catChips').onclick = e => { const b = e.target.closest('[data-cat]'); if (b) { NF.cat = +b.dataset.cat; renderNotes(); } };
+$('#filChips').onclick = e => { const b = e.target.closest('[data-fil]'); if (b) { NF.filter = b.dataset.fil; renderNotes(); } };
+let qT;
+$('#q').oninput = () => { clearTimeout(qT); qT = setTimeout(() => { NF.q = $('#q').value; renderNotes(); }, 250); };
+
+/* ---------- Bitenler: newest first, older than 30 days folded ---------- */
+function renderDone() {
+  const b = J(() => AND.board(), {done: []});
+  const t0 = dayStart(Date.now()), fresh = [], old = [];
+  for (const t of b.done) (t0 - dayStart(t.doneAt) > 30 * DAY ? old : fresh).push(t);
+  const row = t => `<div class="row done" data-task="${t.id}"><div class="meta"><b>${esc(t.title)}</b><span>${esc(fmtWhen(t.doneAt))}${t.catName ? ' · ' + esc(t.catName) : ''}</span></div><button class="side" data-act="undo">Geri al</button></div>`;
+  let h = '', last = '';
+  for (const t of fresh) {
+    const d = dayName(t.doneAt);
+    if (d !== last) { h += `${last ? '</div>' : ''}<h2>${esc(d)}</h2><div class="list">`; last = d; }
+    h += row(t);
+  }
+  if (last) h += '</div>';
+  if (old.length) h += `<details><summary>Daha eski · ${old.length}</summary><div class="list">${old.map(row).join('')}</div></details>`;
+  $('#vDone').innerHTML = h || '<div class="empty"><b>Henüz biten görev yok</b>Bitirdiğin görevler burada toplanır.</div>';
+}
+
+/* ---------- field helpers for the card and the task screen ---------- */
+function dateVal(ms) { if (ms == null || ms < 0) return ''; const d = new Date(ms); return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()); }
+function catOpts(sel) { return CATS.map(c => `<option value="${c.id}"${c.id === sel ? ' selected' : ''}>${esc(c.name)}</option>`).join(''); }
+function recKind(r) { return !r ? '' : r[0]; }
+function fields(t, conf) {
+  const low = k => conf && conf[k] != null && conf[k] < 0.6 ? ' class="low"' : '';
+  const rk = recKind(t.rec);
+  return `<div class="f">
+    <label class="w">Görev<input data-k="title" value="${esc(t.title)}"></label>
+    <label${low('date')}>Gün<input data-k="date" type="date" value="${dateVal(t.due)}"></label>
+    <label${low('date')}>Saat<input data-k="time" type="time" value="${t.hasTime && t.due != null ? hm(t.due) : ''}"></label>
+    <label${t.person ? low('person') : ''}>Kişi<input data-k="person" value="${esc(t.person || '')}"></label>
+    <label${low('cat')}>Kategori<select data-k="cat">${catOpts(t.cat || 7)}</select></label>
+    <label${low('prio')}>Öncelik<select data-k="prio">${[1, 2, 3].map(p => `<option value="${p}"${p === t.prio ? ' selected' : ''}>${PRIO[p]}</option>`).join('')}</select></label>
+    <label>Tekrar<select data-k="rec"><option value="">Yok</option><option value="D"${rk === 'D' ? ' selected' : ''}>Her gün</option>
+      <option value="W"${rk === 'W' ? ' selected' : ''}>Her hafta</option><option value="M"${rk === 'M' ? ' selected' : ''}>Her ay</option></select></label>
+  </div>`;
+}
+/* the form back into task fields; repeating follows the chosen day */
+function collect(box, id) {
+  const v = k => box.querySelector(`[data-k="${k}"]`).value;
+  const date = v('date'), time = v('time');
+  let due = -1, hasTime = false;
+  if (date || time) {
+    const d = date ? date.split('-').map(Number) : null, now = new Date();
+    const x = d ? new Date(d[0], d[1] - 1, d[2]) : new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if (time) { const [hh, mm] = time.split(':').map(Number); x.setHours(hh, mm, 0, 0); hasTime = true; }
+    due = x.getTime();
+  }
+  const rk = v('rec'), base = new Date(due >= 0 ? due : Date.now());
+  const rec = rk === 'D' ? 'D' : rk === 'W' ? 'W:' + ((base.getDay() + 6) % 7 + 1) : rk === 'M' ? 'M:' + base.getDate() : '';
+  if (rec && due < 0) due = dayStart(Date.now());
+  return {id, title: v('title').trim() || '(adsız görev)', due, hasTime, person: v('person').trim(), cat: +v('cat'), prio: +v('prio'), rec};
+}
+
+/* ---------- confirmation card (plan 3.A): "Şunları anladım" ---------- */
+let CARD = null;
+function openCard(noteId) {
+  const r = J(() => AND.review(noteId), null);
+  if (!r || !r.note) return;
+  CARD = r;
+  const n = r.note;
+  let h = `<h3>Şunları anladım</h3><p class="quote">“${esc(n.text || '')}”</p>`;
+  r.tasks.forEach((t, i) => {
+    h += `<div class="task" data-i="${i}"><div class="t">${r.tasks.length > 1 ? (i + 1) + '. ' : ''}Görev</div>
+      <button class="ico x" data-x="${i}" aria-label="Görev değil">${ICON_X}</button>${fields(t, t.conf)}</div>`;
+  });
+  r.done.forEach((g, i) => {
+    if (g.length === 1) h += `<label class="opt"><input type="checkbox" data-close="${g[0].id}" checked> «${esc(g[0].title)}» görevini bitti sayayım mı?</label>`;
+    else h += `<p style="margin:12px 0 0">Hangisi bitti?</p>${g.map(t => `<label class="opt"><input type="radio" name="g${i}" data-close="${t.id}"> ${esc(t.title)}</label>`).join('')}<label class="opt"><input type="radio" name="g${i}" checked> Hiçbiri</label>`;
+  });
+  if (!r.tasks.length) h += `<div class="f"><label class="w${(r.catConf || 1) < 0.6 ? ' low' : ''}">Kategori<select id="noteCat">${catOpts(n.catId || 7)}</select></label></div>`;
+  if (!r.tasks.length && !r.done.length) h += '<p style="margin-top:12px">Görev bulamadım; not olarak saklanacak.</p>';
+  h += `<div class="col" style="margin-top:14px"><button class="btn pri" id="cardSave">Kaydet</button>
+    ${r.tasks.length ? '<button class="btn" id="cardNote">Sadece not olarak kaydet</button>' : ''}
+    <button class="btn link" id="cardFix">Metni düzelt</button></div>`;
+  sheet(h, () => saveCard(false));   // closing the card keeps what it proposed
+  document.querySelectorAll('#sheet [data-x]').forEach(b => b.onclick = () => b.closest('.task').classList.toggle('gone'));
+  $('#cardSave').onclick = () => { dropSheet(); saveCard(false); };
+  if ($('#cardNote')) $('#cardNote').onclick = () => { dropSheet(); saveCard(true); };
+  $('#cardFix').onclick = () => fixText(noteId, n.text || '', true);
+}
+function saveCard(noteOnly) {
+  const r = CARD; CARD = null; if (!r) return;
+  const box = $('#sheet');
+  const a = {note: r.note.id, noteOnly, tasks: [], close: []};
+  r.tasks.forEach((t, i) => {
+    const el = box.querySelector(`.task[data-i="${i}"]`);
+    if (!el) return;
+    a.tasks.push(el.classList.contains('gone') ? {id: t.id, removed: true} : collect(el, t.id));
+  });
+  box.querySelectorAll('[data-close]').forEach(x => { if (x.checked) a.close.push(+x.dataset.close); });
+  if ($('#noteCat')) a.cat = +$('#noteCat').value;
+  const ok = AND.reviewSave(JSON.stringify(a));
+  if (!ok) toast('Kaydedilemedi');
+  else if (noteOnly) toast('Not olarak kaydedildi');
+  else {
+    const k = a.tasks.filter(t => !t.removed).length, c = a.close.length;
+    toast([k ? k + ' görev eklendi' : '', c ? c + ' görev bitti' : ''].filter(Boolean).join(' · ') || 'Not kaydedildi');
+  }
+  setTimeout(nextCard, 400);
+}
+function fixText(noteId, text, fromCard) {
+  sheet(`<h3>Metni düzelt</h3><p>Yanlış duyulan yeri düzelt; görevleri yeniden çıkarayım.</p><textarea id="fix">${esc(text)}</textarea>
+    <div class="btns" style="margin-top:12px"><button class="btn" id="no">Vazgeç</button><button class="btn pri" id="yes">Yeniden oku</button></div>`, fromCard ? () => openCard(noteId) : null);
+  $('#no').onclick = closeSheet;
+  $('#yes').onclick = () => {
+    const v = $('#fix').value.trim(); if (!v) return;
+    CARD = null; dropSheet();
+    AND.reparse(noteId, v); openCard(noteId);
+  };
+}
+/* one card after another, never over another sheet or the recorder */
+function nextCard() {
+  if (!AND || !$('#veil').hidden || R.on || document.body.classList.contains('locked')) return;
+  const id = AND.nextReview();
+  if (id > 0) openCard(id);
+}
+
+/* ---------- task screen ---------- */
+function openTask(id) {
+  const t = J(() => AND.task(id), null);
+  if (!t) return;
+  const open = ['gelen', 'acik', 'ertelendi'].includes(t.status);
+  let h = `<h3>${esc(t.title)}</h3>`;
+  if (t.noteText) h += `<p class="quote">“${esc(t.noteText)}”</p>`;
+  if (t.audio) h += `<button class="btn link" id="tPlay">${playing === -t.id ? 'Durdur' : 'Kaydı dinle'}</button>`;
+  h += `<div id="tBox">${fields(t, null)}</div>`;
+  if (t.snoozes) h += `<p style="margin:10px 0 0">${t.snoozes} kez ertelendi</p>`;
+  h += open
+    ? `<div class="btns" style="margin-top:14px"><button class="btn pri" id="tDone">Bitti</button><button class="btn" id="tSnooze">Ertele</button></div>
+       <div class="btns" style="margin-top:10px"><button class="btn" id="tSave">Kaydet</button><button class="btn red" id="tDel">Sil</button></div>`
+    : `<div class="btns" style="margin-top:14px"><button class="btn pri" id="tUndo">Geri al</button></div>`;
+  sheet(h);
+  if ($('#tPlay')) $('#tPlay').onclick = () => { play(-t.id, t.audio); $('#tPlay').textContent = playing === -t.id ? 'Durdur' : 'Kaydı dinle'; };
+  if (!open) { $('#tUndo').onclick = () => { dropSheet(); AND.taskUndo(id); toast('Geri alındı'); }; return; }
+  $('#tDone').onclick = () => { dropSheet(); done(id); };
+  $('#tDel').onclick = () => { dropSheet(); delTask(id); };
+  $('#tSave').onclick = () => { const ok = AND.taskSave(JSON.stringify(collect($('#tBox'), id))); dropSheet(); toast(ok ? 'Kaydedildi' : 'Kaydedilemedi'); };
+  $('#tSnooze').onclick = () => snoozeSheet(id);
+}
+function snoozeSheet(id) {
+  const evening = new Date().getHours() < 18;
+  sheet(`<h3>Ne zamana erteleyelim?</h3><div class="col">
+    <button class="btn" data-m="hour">1 saat sonra</button>
+    ${evening ? '<button class="btn" data-m="evening">Bu akşam</button>' : ''}
+    <button class="btn" data-m="tomorrow">Yarın</button></div>
+    <div class="f"><label>Gün<input type="date" id="sD" value="${dateVal(Date.now() + DAY)}"></label><label>Saat<input type="time" id="sT" value="09:00"></label></div>
+    <div class="btns" style="margin-top:10px"><button class="btn pri" data-m="at">Bu zamana ertele</button></div>`);
+  $('#sheet').querySelectorAll('[data-m]').forEach(b => b.onclick = () => {
+    let at = 0;
+    if (b.dataset.m === 'at') {
+      const d = $('#sD').value.split('-').map(Number), tm = ($('#sT').value || '09:00').split(':').map(Number);
+      if (!d[0]) { toast('Bir gün seç'); return; }
+      at = new Date(d[0], d[1] - 1, d[2], tm[0], tm[1]).getTime();
+      if (at <= Date.now()) { toast('İleri bir zaman seç'); return; }
+    }
+    AND.taskSnooze(id, b.dataset.m, at); dropSheet(); toast('Ertelendi');
+  });
+}
+
+/* ---------- note screen ---------- */
+function openNote(id) {
+  const n = NOTES[id]; if (!n) return;
+  let h = `<h3>${esc(fmtWhen(n.at))}</h3>`;
+  h += n.text ? `<p class="quote">${esc(n.text)}</p>` : `<p>${noteTitle(n).replace(/<\/?b[^>]*>/g, '')}</p>`;
+  if (n.audio) h += `<button class="btn link" id="nPlay">${playing === id ? 'Durdur' : 'Kaydı dinle'}</button>`;
+  h += `<div class="f"><label class="w">Kategori<select id="nCat">${catOpts(n.catId || 7)}</select></label></div>
+    <div class="btns" style="margin-top:14px">${n.text ? '<button class="btn" id="nFix">Metni düzelt</button>' : ''}<button class="btn red" id="nDel">Sil</button></div>`;
+  sheet(h);
+  if ($('#nPlay')) $('#nPlay').onclick = () => { play(id, n.audio); $('#nPlay').textContent = playing === id ? 'Durdur' : 'Kaydı dinle'; };
+  $('#nCat').onchange = () => { AND.noteCategory(id, +$('#nCat').value); toast('Kategori değişti'); };
+  if ($('#nFix')) $('#nFix').onclick = () => fixText(id, n.text);
+  $('#nDel').onclick = () => ask('Bu not silinsin mi?', 'Not, sesi ve görevleriyle birlikte telefondan kalıcı olarak silinir.', 'Sil', () => {
+    if (playing === id) { audio.pause(); playing = null; }
+    AND.noteDelete(id); render(); toast('Not silindi');
+  }, true);
+}
+
+/* ---------- typed note: the same path as a spoken one ---------- */
+$('#typeBtn').onclick = () => {
+  if (!AND) { toast('Yalnızca telefondaki uygulamada çalışır'); return; }
+  sheet(`<h3>Yazarak not al</h3><p>Söyler gibi yaz: “Cuma akşam faturayı öde”.</p><textarea id="txt"></textarea>
+    <div class="btns" style="margin-top:12px"><button class="btn" id="no">Vazgeç</button><button class="btn pri" id="yes">Kaydet</button></div>`);
+  setTimeout(() => $('#txt') && $('#txt').focus(), 50);
+  $('#no').onclick = closeSheet;
+  $('#yes').onclick = () => {
+    const v = $('#txt').value.trim(); if (!v) return;
+    const r = J(() => AND.addText(v), {});
+    dropSheet(); render();
+    if (r.card) openCard(r.id); else toast('Not kaydedildi');
+  };
+};
+
+/* ---------- settings (plan 9.8) ---------- */
+function renderSettings() {
+  const s = J(() => AND.settings(), {}), pm = J(() => AND.perms(), {}), st = ASR.status;
+  const last = AND ? AND.backupLast() : 0;
+  const perm = (ok, title, text, act) => `<div class="set"><div>${title}<span>${text}</span></div>${ok ? '<span class="ok">Açık</span>' : `<button class="chip" data-p="${act}">Aç</button>`}</div>`;
+  const time = (k, title, text) => `<div class="set"><div>${title}${text ? `<span>${text}</span>` : ''}</div><input type="time" data-s="${k}" value="${esc(s[k] || '')}"></div>`;
+  $('#vSet').innerHTML = `
+    <h2>Hatırlatmalar</h2><div class="card" style="margin:0">
+      ${perm(pm.notif, 'Bildirimler', 'Hatırlatma ve sabah özeti için', 'notif')}
+      ${perm(pm.exact, 'Tam zamanında', 'Hatırlatma dakikası dakikasına gelsin', 'exact')}
+      ${perm(pm.battery, 'Pil kısıtlaması yok', 'Telefon uyurken de hatırlatma gelsin', 'battery')}
+      ${time('morning_summary', 'Sabah özeti', 'Bugünkü, geciken ve önemli görevler; yoksa bildirim gelmez')}
+    </div>
+    <h2>Dönem saatleri</h2><div class="card" style="margin:0">
+      <p style="margin:0">“Sabah ara” dediğinde hatırlatmanın geleceği saatler. Saatsiz görevler sabah saatinde hatırlatılır.</p>
+      ${time('period_sabah', 'Sabah')}${time('period_oglen', 'Öğlen')}${time('period_aksam', 'Akşam')}${time('period_gece', 'Gece')}
+    </div>
+    <h2>Kategoriler</h2><div class="card" style="margin:0">
+      ${CATS.map(c => `<div class="set"><div>${esc(c.name)}</div>${c.fixed ? '' : `<button class="del" data-dc="${c.id}" aria-label="Sil">${ICON_DEL}</button>`}</div>`).join('')}
+      <div class="set"><input id="newCat" placeholder="Yeni kategori" style="flex:1"><button class="chip" id="addCat">Ekle</button></div>
+    </div>
+    <h2>Ses modeli</h2><div class="card" style="margin:0"><div class="set"><div>Whisper base (Türkçe)<span>${st.libs === false ? 'Bu telefonda çalışmıyor' : st.ready ? 'Telefonda; internetsiz çalışır' : st.downloading ? 'İndiriliyor · %' + Math.round((st.p || 0) * 100) : 'İndirilmedi · yaklaşık 95 MB'}</span></div>
+      ${!st.ready && !st.downloading && st.libs !== false ? '<button class="chip" id="dlModel">İndir</button>' : st.ready ? '<span class="ok">Hazır</span>' : ''}</div></div>
+    <h2>Yedekleme</h2><div class="card" style="margin:0">
+      <div class="set"><div>Otomatik yedek<span>${last ? 'Son: ' + esc(fmtWhen(last)) + ' · her sabah, son 7 gün' : 'Her sabah özetle birlikte alınır'}</span></div>${last ? '<button class="chip" id="bAuto">Geri dön</button>' : ''}</div>
+      <div class="set"><div>Dışa aktar<span>Tüm notlar, görevler ve ses kayıtları tek dosyada (JSON + ses)</span></div><button class="chip" id="bExp">Kaydet</button></div>
+      <div class="set"><div>Yedekten geri yükle<span>Telefondaki her şey yedektekiyle değişir</span></div><button class="chip" id="bImp">Seç</button></div>
+    </div>
+    <p style="color:var(--soft);font-size:13px;margin-top:22px">Not Defteri · tüm veriler yalnızca bu telefonda</p>`;
+}
+$('#vSet').addEventListener('change', e => {
+  const k = e.target.dataset.s;
+  if (k && e.target.value) { AND.setSetting(k, e.target.value); toast('Kaydedildi'); }
+});
+$('#vSet').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.p === 'notif') AND.requestNotif();
+  else if (b.dataset.p === 'exact') AND.openExact();
+  else if (b.dataset.p === 'battery') AND.requestBattery();
+  else if (b.dataset.dc) ask('Kategori silinsin mi?', 'Bu kategorideki notlar ve görevler kategorisiz kalır.', 'Sil', () => { AND.deleteCategory(+b.dataset.dc); render(); }, true);
+  else if (b.id === 'addCat') {
+    const v = $('#newCat').value.trim(); if (!v) return;
+    if (AND.addCategory(v) < 0) toast('Bu kategori zaten var'); else render();
+  } else if (b.id === 'dlModel') download();
+  else if (b.id === 'bExp') AND.backupExport();
+  else if (b.id === 'bImp') ask('Yedekten geri yüklensin mi?', 'Telefondaki notlar ve görevler seçeceğin yedektekilerle değişir. Şu anki hâli önce otomatik yedeğe alınır.', 'Dosya seç', () => AND.backupImport(), true);
+  else if (b.id === 'bAuto') ask('Otomatik yedeğe dönülsün mü?', 'Notlar ve görevler ' + fmtWhen(AND.backupLast()) + ' hâline döner. Ses kayıtları silinmez.', 'Geri dön', () => toast(AND.backupRestoreAuto() ? 'Yedeğe dönüldü' : 'Yedek açılamadı'), true);
+});
+window.__ndBackup = (kind, ok, err) => {
+  if (ok) toast(kind === 'export' ? 'Yedek kaydedildi' : 'Yedek geri yüklendi');
+  else if (err !== 'cancel') toast(kind === 'export' ? 'Yedek kaydedilemedi' : 'Bu dosya bir Not Defteri yedeği değil');
+  render();
+};
+
+/* ---------- first start: what the app needs, once ---------- */
+function onboarding() {
+  const s = J(() => AND.settings(), {});
+  if (!AND || s.onboarded) return false;
+  const c = caps(), pm = J(() => AND.perms(), {}), st = asrStatus();
+  const item = (ok, title, text, id) => `<div class="set"><div>${title}<span>${text}</span></div>${ok ? '<span class="ok">Tamam</span>' : `<button class="chip" id="${id}">İzin ver</button>`}</div>`;
+  sheet(`<h3>Hoş geldin</h3><p>Aklındakini söyle; görevi, tarihi ve kişiyi ben çıkarayım, zamanı gelince hatırlatayım. Her şey bu telefonda kalır.</p>
+    ${item(c.mic, 'Mikrofon', 'Sesli not için', 'oMic')}
+    ${item(pm.notif, 'Bildirimler', 'Hatırlatmalar için', 'oNotif')}
+    ${st.libs === false ? '' : `<div class="set"><div>Türkçe ses modeli<span>Bir kez indirilir (yaklaşık 95 MB), sonra internet gerekmez</span></div>${st.ready ? '<span class="ok">Hazır</span>' : st.downloading ? '<span class="ok">İniyor</span>' : '<button class="chip" id="oDl">İndir</button>'}</div>`}
+    <div class="btns" style="margin-top:16px"><button class="btn pri" id="oGo">Başla</button></div>`, () => AND.setSetting('onboarded', '1'));
+  if ($('#oMic')) $('#oMic').onclick = () => { permWait = onboardAgain; AND.requestMic(); };
+  if ($('#oNotif')) $('#oNotif').onclick = () => AND.requestNotif();
+  if ($('#oDl')) $('#oDl').onclick = () => { download(); setTimeout(onboardAgain, 200); };
+  $('#oGo').onclick = closeSheet;
+  return true;
+}
+function onboardAgain() { if (!$('#veil').hidden && $('#oGo')) { sheetClose = null; onboarding(); } }
 
 /* ---------- recording ---------- */
 const R = { on: false, timer: 0, levels: [], lastHint: '' };
 let permWait = null;
 window.__ndPerm = (kind, ok, blocked) => {
+  if (kind === 'notif') { onboardAgain(); if (VIEW === 'set') render(); return; }
   if (kind !== 'mic') return;
   const f = permWait; permWait = null;
   if (ok) { f && f(); return; }
   sheet(`<h3>Mikrofon izni gerekli</h3><p>Sesli not alabilmek için mikrofona izin vermelisin. Ses yalnızca telefonunda kalır.</p>
     <div class="btns"><button class="btn" id="no">Vazgeç</button><button class="btn pri" id="yes">${blocked ? 'Ayarları aç' : 'Tekrar dene'}</button></div>`);
   $('#no').onclick = closeSheet;
-  $('#yes').onclick = () => { closeSheet(); if (blocked) AND.openSettings(); else startRec(); };
+  $('#yes').onclick = () => { dropSheet(); if (blocked) AND.openSettings(); else startRec(); };
 };
 
 function startRec() {
   if (!AND) { toast('Kayıt yalnızca telefondaki uygulamada çalışır'); return; }
+  if (R.on) return;
   if (!caps().mic) { permWait = startRec; AND.requestMic(); return; }
   const r = JSON.parse(AND.recStart());
   if (!r.ok) { if (r.error === 'perm') { permWait = startRec; AND.requestMic(); } else toast('Kayıt başlamadı: ' + r.error); return; }
-  if (playing) { audio.pause(); playing = null; renderNotes(); }
+  if (playing) { audio.pause(); playing = null; }
+  if (!$('#veil').hidden) dropSheet();
   AND.vibrate();
   R.on = true; R.levels = [];
   $('#rec').hidden = false; $('#rec').classList.remove('paused');
@@ -303,7 +779,12 @@ function drawWave() {
   }
 }
 
-function endRec() { R.on = false; clearInterval(R.timer); $('#rec').hidden = true; }
+/* over the lock screen only the recorder is shown; afterwards the app steps back behind the lock */
+function endRec() {
+  R.on = false; clearInterval(R.timer); $('#rec').hidden = true;
+  if (document.body.classList.contains('locked')) { document.body.classList.remove('locked'); AND.lockDone(); return true; }
+  return false;
+}
 
 $('#micBtn').onclick = startRec;
 $('#recPause').onclick = () => {
@@ -313,47 +794,58 @@ $('#recPause').onclick = () => {
 };
 $('#recDone').onclick = () => {
   const r = JSON.parse(AND.recStop());
-  endRec(); AND.vibrate();
+  const locked = endRec(); AND.vibrate();
   if (r.ok) toast('Not kaydedildi · ' + fmtDur(r.item.ms));
   else toast(r.error === 'empty' ? 'Kayıt çok kısaydı' : 'Kayıt kaydedilemedi');
-  renderNotes();
+  if (locked) return;
+  render();
   // first note without the model: offer the one-time download right away
-  const st = ASR.status;
+  const st = asrStatus();
   if (r.ok && st.libs && !st.ready && !st.downloading && !ASR.offered) {
     ASR.offered = true;
-    sheet(`<h3>Notun yazıya çevrilsin mi?</h3><p>Bunun için Türkçe ses modelini bir kez indirmen gerekiyor (yaklaşık 95 MB, Wi-Fi önerilir). Sonrasında yazıya çevirme internetsiz çalışır ve sesin telefondan çıkmaz.</p>
-      <div class="btns"><button class="btn" id="no">Sonra</button><button class="btn pri" id="yes">İndir</button></div>`);
-    $('#no').onclick = closeSheet;
-    $('#yes').onclick = () => { closeSheet(); AND.asrDownload(); setTimeout(renderModel, 100); };
+    ask('Notun yazıya çevrilsin mi?', 'Bunun için Türkçe ses modelini bir kez indirmen gerekiyor (yaklaşık 95 MB, Wi-Fi önerilir). Sonrasında yazıya çevirme internetsiz çalışır ve sesin telefondan çıkmaz.', 'İndir', download);
   }
 };
 $('#recCancel').onclick = () => {
-  sheet(`<h3>Kayıt silinsin mi?</h3><p>Bu kayıt kaydedilmeden atılır.</p>
-    <div class="btns"><button class="btn" id="no">Kayda dön</button><button class="btn red" id="yes">Sil</button></div>`);
-  $('#no').onclick = closeSheet;
-  $('#yes').onclick = () => { closeSheet(); AND.recCancel(); endRec(); };
+  ask('Kayıt silinsin mi?', 'Bu kayıt kaydedilmeden atılır.', 'Sil', () => { AND.recCancel(); endRec(); }, true);
+  $('#no').textContent = 'Kayda dön';
 };
 
 /* ---------- phone hooks ---------- */
 window.__ndBack = () => {
   if (!$('#veil').hidden) { closeSheet(); return true; }
   if (R.on) { toast('Bitirmek için ✓, atmak için ✕'); return true; }
+  if (VIEW === 'set') { show(PREV); return true; }
+  if (VIEW !== 'today') { show('today'); return true; }
   return false;
 };
 window.__ndResume = () => {
-  renderToday();
   // a recording may still be running in the background service after the page was reloaded
   if (AND && !R.on && JSON.parse(AND.recInfo()).state !== 'idle') {
     R.on = true; R.levels = []; $('#rec').hidden = false; sizeWave(); R.timer = setInterval(tick, 80);
   }
+  if (R.on) return;
+  render();
+  nextCard();
+};
+/* widget, tile, shortcut */
+window.__ndRecord = locked => {
+  if (locked) document.body.classList.add('locked');
+  if (!R.on) startRec();
+  if (!R.on && locked) { document.body.classList.remove('locked'); AND.lockDone(); }   // no permission: nothing to show over the lock
+};
+/* a reminder notification was tapped (0: the morning summary) */
+window.__ndOpen = id => {
+  if (R.on) return;
+  if (VIEW !== 'today') show('today');
+  if (id > 0) { if (!$('#veil').hidden) dropSheet(); openTask(id); }
 };
 window.addEventListener('resize', () => { if (R.on) sizeWave(); });
 
 const c0 = caps();
 if (c0.native) document.documentElement.dataset.theme = c0.dark ? 'dark' : 'light';
-renderToday();
-renderNotes();
-window.__ndResume();
+render();
+if (!onboarding()) window.__ndResume();
 </script>
 </body>
 </html>

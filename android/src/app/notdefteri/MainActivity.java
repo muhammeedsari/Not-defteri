@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** WebView shell: the interface lives in assets/www (web/ in the repository), phone features come through the AND bridge. */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements Asr.Listener {
 
     /* Pages are served from this https origin out of the APK's assets: a secure context with no network involved. */
     static final String HOST = "appassets.androidplatform.net";
@@ -76,6 +76,20 @@ public class MainActivity extends Activity {
 
         web.addJavascriptInterface(new Bridge(), "NotDefteriAndroid");
         web.loadUrl(START);
+        Asr.setListener(this);
+        Asr.kick(this);   // notes left waiting by an earlier run
+    }
+
+    /* ---------- speech-to-text events ---------- */
+
+    @Override
+    public void onNote(long id, String state, double p, String text) {
+        js("window.__ndAsr && window.__ndAsr(" + id + "," + JSONObject.quote(state) + "," + p + "," + (text == null ? "null" : JSONObject.quote(text)) + ")");
+    }
+
+    @Override
+    public void onModel(String state, double p, String error) {
+        js("window.__ndModel && window.__ndModel(" + JSONObject.quote(state) + "," + p + "," + (error == null ? "null" : JSONObject.quote(error)) + ")");
     }
 
     private void js(final String code) {
@@ -195,6 +209,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        Asr.setListener(null);
         if (web != null) {
             web.removeJavascriptInterface("NotDefteriAndroid");
             web.destroy();
@@ -271,6 +286,7 @@ public class MainActivity extends Activity {
                 if (!o.optBoolean("ok")) return res;
                 JSONObject item = o.getJSONObject("item");
                 o.put("id", Db.get(MainActivity.this).addVoiceNote(item.getString("name"), item.getLong("ms")));
+                Asr.kick(MainActivity.this);
                 return o.toString();
             } catch (Exception e) {
                 return res;
@@ -285,5 +301,10 @@ public class MainActivity extends Activity {
         @JavascriptInterface public String notes() { return Db.get(MainActivity.this).notes(); }
         @JavascriptInterface public boolean noteDelete(long id) { return Db.get(MainActivity.this).deleteNote(id); }
         @JavascriptInterface public String categories() { return Db.get(MainActivity.this).categories(); }
+
+        /* -- speech-to-text -- */
+        @JavascriptInterface public String asrStatus() { return Asr.status(MainActivity.this); }
+        @JavascriptInterface public void asrDownload() { Asr.download(MainActivity.this); }
+        @JavascriptInterface public void asrCancel() { Asr.cancelDownload(); }
     }
 }

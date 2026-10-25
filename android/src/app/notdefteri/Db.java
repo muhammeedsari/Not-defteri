@@ -151,6 +151,30 @@ final class Db extends SQLiteOpenHelper {
         return ok;
     }
 
+    /** Notes with audio that still wait for speech-to-text, oldest first. */
+    long[] pendingTranscripts() {
+        Cursor c = getReadableDatabase().rawQuery("SELECT id FROM notes WHERE transcript IS NULL AND audio_path IS NOT NULL ORDER BY created_at LIMIT 20", null);
+        try {
+            long[] ids = new long[c.getCount()];
+            for (int i = 0; c.moveToNext(); i++) ids[i] = c.getLong(0);
+            return ids;
+        } finally {
+            c.close();
+        }
+    }
+
+    String audioOf(long id) {
+        Cursor c = getReadableDatabase().rawQuery("SELECT audio_path FROM notes WHERE id = ?", new String[]{String.valueOf(id)});
+        try { return c.moveToFirst() ? c.getString(0) : null; } finally { c.close(); }
+    }
+
+    /** "" means no speech was found; NULL means not written down yet. */
+    void setTranscript(long id, String text) {
+        ContentValues v = new ContentValues();
+        v.put("transcript", text);
+        getWritableDatabase().update("notes", v, "id = ?", new String[]{String.valueOf(id)});
+    }
+
     /* ---------- categories and settings ---------- */
 
     String categories() {

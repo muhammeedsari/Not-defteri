@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 WEB = ROOT / "web"
-# everything that is not in git (android.jar, later the speech-to-text libraries): see android/fetch_vendor.sh
+# everything that is not in git (android.jar, speech-to-text libraries, voice detector): see android/fetch_vendor.sh
 VENDOR = pathlib.Path(os.environ.get("ND_VENDOR", ROOT / "vendor"))
 ANDROID_JAR = pathlib.Path(os.environ.get("ND_ANDROID_JAR", VENDOR / "android-34.jar"))
 OUT = HERE / "out"
@@ -55,6 +55,10 @@ def main():
     www = HERE / "assets" / "www"
     shutil.rmtree(www, ignore_errors=True)
     shutil.copytree(WEB, www)
+    # voice detector for speech-to-text (Whisper itself is downloaded in the app)
+    asr = HERE / "assets" / "asr"
+    asr.mkdir(parents=True, exist_ok=True)
+    shutil.copy(VENDOR / "asr" / "silero_vad.onnx", asr / "silero_vad.onnx")
 
     # icons
     res = HERE / "res"
@@ -78,6 +82,15 @@ def main():
     run(["aapt", "package", "-f", "-M", str(HERE / "AndroidManifest.xml"), "-S", str(res), "-A", str(HERE / "assets"),
          "-I", str(ANDROID_JAR), "-F", str(unsigned)])
     run(["aapt", "add", str(unsigned), "classes.dex"], cwd=str(OUT / "dex"))
+    # speech-to-text native libraries (sherpa-onnx + ONNX Runtime)
+    libs = OUT / "libs"
+    names = []
+    for abi in ["arm64-v8a", "armeabi-v7a"]:
+        (libs / "lib" / abi).mkdir(parents=True, exist_ok=True)
+        for so in ["libsherpa-onnx-jni.so", "libonnxruntime.so"]:
+            shutil.copy(VENDOR / "jniLibs" / abi / so, libs / "lib" / abi / so)
+            names.append(f"lib/{abi}/{so}")
+    run(["aapt", "add", str(unsigned)] + names, cwd=str(libs))
     aligned = OUT / "app-aligned.apk"
     run(["zipalign", "-f", "-p", "4", str(unsigned), str(aligned)])
     # signing key (kept so future updates install over this version)

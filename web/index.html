@@ -33,7 +33,13 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--soft)
 .row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:var(--r);padding:10px 12px;border:1px solid var(--line)}
 .row .play{width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
 .row .meta{flex:1;min-width:0}
-.row .meta b{display:block;font-weight:600}
+.row .meta b{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-weight:600}
+.row .meta b.wait{font-weight:500;color:var(--soft)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:20px}
+.card p{margin:0 0 12px;color:var(--soft)}
+.card b{color:var(--ink)}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin:4px 0 12px}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
 .row .meta span{color:var(--soft);font-size:14px}
 .row .del{width:40px;height:40px;display:grid;place-items:center;color:var(--soft);flex:none}
 svg{width:22px;height:22px;fill:currentColor}
@@ -87,6 +93,8 @@ svg{width:22px;height:22px;fill:currentColor}
     <b>Henüz not yok</b>
     Aklındakini söylemek için alttaki düğmeye bas.
   </div>
+
+  <div id="model" class="card" hidden></div>
 
   <section id="notesBox" hidden>
     <h2>Notlar</h2>
@@ -158,14 +166,67 @@ function renderToday() {
 const audio = new Audio();
 let playing = null, NOTES = [];
 audio.addEventListener('ended', () => { playing = null; renderNotes(); });
+/* Speech-to-text state: text undefined = waiting, "" = no speech found */
+const ASR = { status: {}, live: {}, offered: false };
+function asrStatus() { try { ASR.status = AND ? JSON.parse(AND.asrStatus()) : {}; } catch (e) { ASR.status = {}; } return ASR.status; }
+function noteTitle(n) {
+  if (n.text) return `<b>${esc(n.text)}</b>`;
+  if (n.text === '') return '<b class="wait">Konuşma algılanmadı</b>';
+  const p = ASR.live[n.id];
+  if (p !== undefined) return `<b class="wait">Yazıya çevriliyor${p > 0 ? ' · %' + Math.round(p * 100) : '…'}</b>`;
+  return `<b class="wait">${ASR.status.ready ? 'Yazıya çevrilmeyi bekliyor' : 'Model indirilince yazıya çevrilecek'}</b>`;
+}
+function renderModel() {
+  const st = asrStatus(), box = $('#model');
+  const waiting = NOTES.some(n => n.text === undefined);
+  if (!AND || st.ready || st.libs === false || (!waiting && !st.downloading)) { box.hidden = true; return; }
+  box.hidden = false;
+  if (st.downloading) {
+    box.innerHTML = `<p><b>Türkçe ses modeli indiriliyor</b> · %${Math.round((st.p || 0) * 100)}</p>
+      <div class="bar"><i style="width:${(st.p || 0) * 100}%"></i></div>
+      <div class="btns"><button class="btn" data-act="cancel">Durdur</button></div>`;
+  } else {
+    box.innerHTML = `<p>Sesli notlarını yazıya çevirmek için <b>Türkçe ses modelini bir kez indir</b> (yaklaşık 95 MB, Wi-Fi önerilir). Sonrasında internet gerekmez; sesin telefondan çıkmaz.</p>
+      <div class="btns"><button class="btn pri" data-act="dl">${ASR.err ? 'Tekrar dene' : 'İndir'}</button></div>`;
+  }
+}
+$('#model').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.act === 'dl') { ASR.err = false; AND.asrDownload(); setTimeout(renderModel, 100); }
+  else if (b.dataset.act === 'cancel') AND.asrCancel();
+});
+window.__ndModel = (state, p, err) => {
+  if (state === 'progress') {
+    const bar = $('#model .bar i'); if (!bar) { renderModel(); return; }
+    bar.style.width = (p * 100) + '%'; $('#model p').innerHTML = `<b>Türkçe ses modeli indiriliyor</b> · %${Math.round(p * 100)}`;
+  } else if (state === 'done') { toast('Model indirildi; notların yazıya çevriliyor'); renderNotes(); }
+  else if (state === 'error') {
+    ASR.err = err !== 'cancel';
+    if (ASR.err) toast(err && err.startsWith('load') ? 'Ses modeli açılamadı' : 'İndirilemedi; internet bağlantını kontrol edip tekrar dene');
+    renderNotes();
+  }
+};
+window.__ndAsr = (id, state, p, text) => {
+  if (state === 'start' || state === 'progress') ASR.live[id] = p;
+  else { delete ASR.live[id]; if (state === 'error') toast('Bir not yazıya çevrilemedi'); }
+  if (state === 'progress') {   // only the line changes; the list stays as it is
+    const row = document.querySelector(`.row[data-id="${id}"] .meta`);
+    const n = NOTES.find(x => x.id === id);
+    if (row && n) { row.firstElementChild.outerHTML = noteTitle(n); return; }
+  }
+  renderNotes();
+};
+
 function renderNotes() {
+  asrStatus();
   try { NOTES = AND ? JSON.parse(AND.notes()) : []; } catch (e) { NOTES = []; }
   $('#empty').hidden = NOTES.length > 0;
   $('#notesBox').hidden = NOTES.length === 0;
   $('#notes').innerHTML = NOTES.map(n => `<div class="row" data-id="${n.id}">
     ${n.audio ? `<button class="play" data-act="play" aria-label="Dinle">${playing === n.id ? ICON_STOP : ICON_PLAY}</button>` : ''}
-    <div class="meta"><b>${esc(n.text ? n.text.slice(0, 80) : 'Sesli not')}</b><span>${esc(fmtWhen(n.at))}${n.ms ? ' · ' + fmtDur(n.ms) : ''}${n.cat ? ' · ' + esc(n.cat) : ''}</span></div>
+    <div class="meta">${noteTitle(n)}<span>${esc(fmtWhen(n.at))}${n.ms ? ' · ' + fmtDur(n.ms) : ''}${n.cat ? ' · ' + esc(n.cat) : ''}</span></div>
     <button class="del" data-act="del" aria-label="Sil">${ICON_DEL}</button></div>`).join('');
+  renderModel();
 }
 $('#notes').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -256,6 +317,15 @@ $('#recDone').onclick = () => {
   if (r.ok) toast('Not kaydedildi · ' + fmtDur(r.item.ms));
   else toast(r.error === 'empty' ? 'Kayıt çok kısaydı' : 'Kayıt kaydedilemedi');
   renderNotes();
+  // first note without the model: offer the one-time download right away
+  const st = ASR.status;
+  if (r.ok && st.libs && !st.ready && !st.downloading && !ASR.offered) {
+    ASR.offered = true;
+    sheet(`<h3>Notun yazıya çevrilsin mi?</h3><p>Bunun için Türkçe ses modelini bir kez indirmen gerekiyor (yaklaşık 95 MB, Wi-Fi önerilir). Sonrasında yazıya çevirme internetsiz çalışır ve sesin telefondan çıkmaz.</p>
+      <div class="btns"><button class="btn" id="no">Sonra</button><button class="btn pri" id="yes">İndir</button></div>`);
+    $('#no').onclick = closeSheet;
+    $('#yes').onclick = () => { closeSheet(); AND.asrDownload(); setTimeout(renderModel, 100); };
+  }
 };
 $('#recCancel').onclick = () => {
   sheet(`<h3>Kayıt silinsin mi?</h3><p>Bu kayıt kaydedilmeden atılır.</p>

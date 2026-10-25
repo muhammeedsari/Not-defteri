@@ -8,3 +8,4 @@ android/res/mipmap-*dpi/
 vendor
 *.onnx
 *.wav
+*.idsig

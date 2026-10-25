@@ -8,7 +8,7 @@ Bu dosyayı her oturumun başında oku. Ayrıntılar: `docs/PLAN.md` (ürün ve 
 - **Arayüz:** tek sayfalık HTML/CSS/vanilla JS, Android WebView içinde (`web/index.html`). Çerçeve yok. Sadece Türkçe.
 - **Yerel katman:** Java 8 (lambda/method reference YOK — dalvik-exchange min-sdk 24 ile derlenir), `android/src/app/notdefteri/`.
 - **Derleme:** Gradle YOK. `android/build_apk.py`: aapt → javac (-source 8, android-34.jar) → dalvik-exchange → aapt add → zipalign → apksigner.
-- **Sürüm:** şu an **0.1** (versionCode 1). minSdk 24, targetSdk 34. Paket adı `app.notdefteri`.
+- **Sürüm:** şu an **0.2** (versionCode 2). minSdk 24, targetSdk 34. Paket adı `app.notdefteri`.
 
 ## Kullanıcıyla çalışma kuralları (plan 12. bölüm, kesin)
 - Kullanıcıyla **Türkçe** konuş; teknik olmayan, kısa ve net anlat.
@@ -41,4 +41,5 @@ ND_KS=/yol/not-defteri-imza.p12 ND_KS_PASS=… python3 android/build_apk.py   # 
 - `web/index.html`: tüm arayüz + JS. Köprü `AND = window.NotDefteriAndroid`. Telefon olayları: `__ndPerm(kind, ok, blocked)`, `__ndResume()`, `__ndBack()` (true dönerse geri tuşu sayfada kaldı). Diyaloglar sayfa içi `sheet()` ile (tarayıcı `alert/confirm` kullanma).
 - `MainActivity.java`: WebView, `https://appassets.androidplatform.net/` altından asset sunucusu, `/__audio/<ad>` ile kayıt dosyaları, izinler, köprü.
 - `Recorder.java`: Ses Defteri'nin kaydedicisinden sadeleştirildi. 16 kHz mono AAC (32 kbps) `.m4a`, uygulamanın özel klasöründe (`files/audio`, MediaStore'a gitmez). Kaynak VOICE_RECOGNITION (olmazsa MIC). Aramada otomatik duraklatma korunur.
+- `Db.java`: SQLite (plan 5. bölüm), tek örnek `Db.get(c)`. Zamanlar epoch ms; `audio_path` = `files/audio` içindeki dosya adı. Gecikti saklanmaz, sorguda hesaplanır. Köprü: `notes()`, `noteDelete(id)`, `categories()`; `recStop()` kaydı not olarak ekleyip `id` döndürür.
 - `RecordService.java`: kayıt sürerken ön plan servisi (mikrofon türü).

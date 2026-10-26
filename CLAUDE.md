@@ -8,7 +8,7 @@ Bu dosyayı her oturumun başında oku. Ayrıntılar: `docs/PLAN.md` (ürün ve 
 - **Arayüz:** tek sayfalık HTML/CSS/vanilla JS, Android WebView içinde (`web/index.html`). Çerçeve yok. Sadece Türkçe.
 - **Yerel katman:** Java 8 (lambda/method reference YOK — dalvik-exchange min-sdk 24 ile derlenir), `android/src/app/notdefteri/`.
 - **Derleme:** Gradle YOK. `android/build_apk.py`: aapt → javac (-source 8, android-34.jar) → dalvik-exchange → aapt add → zipalign → apksigner.
-- **Sürüm:** şu an **0.9** (versionCode 4; v1 kabul ölçütleri telefonda sağlanınca 1.0). minSdk 24, targetSdk 34. Paket adı `app.notdefteri`.
+- **Sürüm:** şu an **0.9.1** (versionCode 5; v1 kabul ölçütleri telefonda sağlanınca 1.0). minSdk 24, targetSdk 34. Paket adı `app.notdefteri`.
 
 ## Kullanıcıyla çalışma kuralları (plan 12. bölüm, kesin)
 - Kullanıcıyla **Türkçe** konuş; teknik olmayan, kısa ve net anlat.

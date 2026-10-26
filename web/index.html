@@ -517,7 +517,7 @@ function openCard(noteId) {
   const n = r.note;
   let h = `<h3>Şunları anladım</h3><p class="quote">“${esc(n.text || '')}”</p>`;
   r.tasks.forEach((t, i) => {
-    h += `<div class="task" data-i="${i}"><div class="t">${r.tasks.length > 1 ? (i + 1) + '. ' : ''}Görev</div>
+    h += `<div class="task" data-i="${i}">${r.tasks.length > 1 ? `<div class="t">${i + 1}. görev</div>` : ''}
       <button class="ico x" data-x="${i}" aria-label="Görev değil">${ICON_X}</button>${fields(t, t.conf)}</div>`;
   });
   r.done.forEach((g, i) => {
@@ -544,7 +544,7 @@ function saveCard(noteOnly) {
     if (!el) return;
     a.tasks.push(el.classList.contains('gone') ? {id: t.id, removed: true} : collect(el, t.id));
   });
-  box.querySelectorAll('[data-close]').forEach(x => { if (x.checked) a.close.push(+x.dataset.close); });
+  if (!noteOnly) box.querySelectorAll('[data-close]').forEach(x => { if (x.checked) a.close.push(+x.dataset.close); });
   if ($('#noteCat')) a.cat = +$('#noteCat').value;
   const ok = AND.reviewSave(JSON.stringify(a));
   if (!ok) toast('Kaydedilemedi');

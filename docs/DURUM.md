@@ -43,6 +43,13 @@
   - Veritabanı 2. sürüm: `notes.review` (kartın göstereceği), `tasks.conf` (güven puanları), `tasks.created_at`, `tasks.touched_at`.
   - Sürüm 0.9 (versionCode 4): kabul ölçütleri telefonda sağlanınca 1.0 olur.
 
+- **Test (0.9.1, 26 Ekim 2026, kullanıcı "test et" dedi)**
+  - Ayrıştırıcı, 201 cümlelik sette ilk çalıştırmada tarih/saat %98,9 (174/176), tam doğru cümle 197/201 çıktı. Hatalar: "önemli:" (iki nokta), tek başına "unutmayayım," parçası ayrı görev sayılıyordu, "servise bin" görev sayılmıyordu, "dişçi" kategorisi. Düzeltildi.
+  - Sete girmemiş 20 yeni cümleyle denendi, 6 hata daha bulundu ve düzeltildi: "bu akşam"daki "bu" başlıkta kalıyordu; "kasımın 3'ünde" ve "20'sinde" okunmuyordu; fiilsiz randevular ("toplantı var", "dişçi randevum var", "15 kasım 14:30 noter") görev sayılmıyordu (artık plan kelimesi ya da saat varsa ve cümle geçmiş/duyulan zamanda değilse görev); "Ahmet'i aradım, yarın 3'te toplantı var"da toplantı kayboluyordu. Bu 12 cümle sete eklendi: **213/213, tarih/saat %100**. Uyarı: seti ayrıştırıcıyı yazan hazırladı; gerçek konuşmada oran daha düşük olabilir.
+  - Arayüz, masaüstü Chromium'da sahte telefon köprüsüyle denendi: ilk açılış, onay kartı (düzeltme, ✕, sesle bitirme onayı, metni düzelt, geri tuşuyla kapatınca kaydetme), görev ekranı, erteleme, bitti + geri al, gecikenler soruları, böl, 30 gün sorusu, Notlar arama/filtre, not ekranı, Bitenler, ayarlar, yazarak not, kayıt, kilit ekranı kaydı. Sayfa hatası yok. Düzeltilen: kartta "Görev" başlığı iki kez yazıyordu; "Sadece not olarak kaydet" yine de bitti işaretli görevi kapatıyordu.
+  - Veritabanındaki 38 SQL cümlesi gerçek SQLite'ta çalıştırıldı: sözdizimi hatası yok.
+  - Denenemeyenler (telefon/emülatör yok): hatırlatma ve bildirim düğmeleri, yeniden başlatma, widget, kutucuk, gerçek kilit ekranı, yedek dosyası, ses kaydı, model indirme ve yazıya çevirme.
+
 ## Sıradaki adım
 **v1 kabul ölçütlerinin telefonda denenmesi** (plan 10. bölüm). Hepsi işaretlenince sürüm 1.0 yapılır, ardından v2. Denenecekler:
 - [ ] İnternet kapalıyken akışın tamamı (kayıt → yazı → kart → hatırlatma)

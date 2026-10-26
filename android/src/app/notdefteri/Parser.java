@@ -56,7 +56,7 @@ final class Parser {
     private static final String[] NUMS = {"sıfır", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz", "on", "on bir", "on iki"};
     /** suffixes a number or a day may carry: -de/-te (at), -e/-ye (to), -i (the), -inde (on the …) */
     private static final String[] SUF = {"", "de", "da", "te", "ta", "e", "a", "ye", "ya", "i", "ı", "u", "ü", "yi", "yı", "yu", "yü",
-        "si", "sı", "inde", "ında", "unda", "ünde", "nde", "nda", "ine", "ına", "una", "üne", "ne", "na", "den", "dan", "ten", "tan",
+        "si", "sı", "inde", "ında", "unda", "ünde", "nde", "nda", "sinde", "sında", "ine", "ına", "una", "üne", "sine", "sına", "ne", "na", "den", "dan", "ten", "tan",
         "günü", "leri", "ları", "ler", "lar", "nci", "ncı", "ncu", "ncü", "inci", "ıncı", "uncu", "üncü"};
     /** imperative work verbs (plan: ara, al, öde, gönder, götür, yaz, git, randevu al …) */
     static final Set<String> VERBS = set("ara", "al", "öde", "gönder", "götür", "getir", "yaz", "git", "yap", "bak", "sor", "iste", "bitir",
@@ -91,7 +91,7 @@ final class Parser {
             "mesai", "sözleşme", "ihale", "işyeri", "şirket", "tedarikçi", "personel", "bordro", "fatura kes", "iş");
         kw(EV, "temizlik", "çamaşır", "bulaşık", "tamir", "tesisatçı", "kombi", "ev", "mutfak", "banyo", "perde", "boya", "elektrikçi",
             "çöp", "ütü", "musluk", "ampul", "halı", "balkon", "bahçe", "kapıcı", "komşu", "tadilat");
-        kw(SAGLIK, "doktor", "hastane", "ilaç", "ilac", "diş", "eczane", "tahlil", "muayene", "aşı", "vitamin", "spor", "tansiyon", "kontrol",
+        kw(SAGLIK, "doktor", "hastane", "ilaç", "ilac", "diş", "dişçi", "eczane", "tahlil", "muayene", "aşı", "vitamin", "spor", "tansiyon", "kontrol",
             "göz", "fizik tedavi", "reçete", "randevu", "hekim", "psikolog", "diyet", "yürüyüş");
         kw(FIKIR, "fikir", "fikri", "aklıma", "belki", "düşün", "kitap", "yazı", "hayal", "girişim", "uygulama");
     }
@@ -108,7 +108,7 @@ final class Parser {
         boolean used;       // taken by a date/time/filler: left out of the title
         Tok(String r) {
             raw = r;
-            low = r.toLowerCase(TR).replace("'", "").replaceAll("[^\\p{L}\\p{N}:.\\-]", "").replaceAll("^[.\\-]+|[.\\-]+$", "");
+            low = r.toLowerCase(TR).replace("'", "").replaceAll("[^\\p{L}\\p{N}:.\\-]", "").replaceAll("^[.\\-]+|[.:\\-]+$", "");
         }
     }
 
@@ -149,6 +149,10 @@ final class Parser {
                 } else {
                     Done d = done(c);
                     if (d != null) r.done.add(d);
+                    else {   // "öbür gün 10'da toplantı var", "15 kasım 14:30 noter": a dated plan is a task too
+                        Task k = appointment(c, prev);
+                        if (k != null) { r.tasks.add(k); prev = k; }
+                    }
                 }
             }
         }
@@ -173,10 +177,18 @@ final class Parser {
         List<List<Tok>> out = new ArrayList<>();
         List<Tok> acc = new ArrayList<>();
         boolean accTask = false;
+        List<Tok> carry = new ArrayList<>();
         for (List<Tok> p : parts) {
+            // "unutmayayım, cuma kirayı öde" / "acil, …": a part of only emphasis words belongs to the next one
+            boolean only = true;
+            for (Tok k : p) if (!EMPHASIS.contains(k.low.replace(",", "")) && !NEED.contains(k.low)) { only = false; break; }
+            if (only && p != parts.get(parts.size() - 1)) { carry.addAll(p); continue; }
+            if (!carry.isEmpty()) { carry.addAll(p); p = carry; carry = new ArrayList<>(); }
             boolean pt = hasTask(p);
             if (pt && (accTask || !acc.isEmpty() && done(acc) != null)) { out.add(acc); acc = new ArrayList<>(); accTask = false; }
             if (!pt && accTask && done(p) != null) { out.add(acc); acc = new ArrayList<>(); accTask = false; }
+            // "Ahmet'i aradım, yarın 3'te toplantı var": what follows a done sentence is read on its own
+            else if (!pt && !accTask && !acc.isEmpty() && done(acc) != null) { out.add(acc); acc = new ArrayList<>(); }
             acc.addAll(p);
             accTask |= pt;
         }
@@ -207,6 +219,7 @@ final class Parser {
         for (int i = 0; i < c.size(); i++) {
             String w = c.get(i).low;
             if (NEED.contains(w) || necessity(w) || future(w)) return true;
+            if (w.equals("bin") && i == c.size() - 1) return true;   // "servise bin"; not the "bin" of "5 bin lira"
             if (VERBS.contains(w)) {
                 // "bir ara" means "some time", not "call"
                 if (w.equals("ara") && i > 0 && c.get(i - 1).low.equals("bir")) continue;
@@ -214,6 +227,27 @@ final class Parser {
             }
         }
         return false;
+    }
+
+    private static final String[] PLANS = {"randevu", "toplantı", "görüşme", "sınav", "maç", "düğün", "nişan", "ders", "konser", "uçuş", "tören", "mülakat", "son"};
+
+    /** Only with a plan word or a clock time, never in a past or hearsay sentence ("dün toplantı vardı", "yağacakmış"). */
+    private Task appointment(List<Tok> c, Task prev) {
+        boolean plan = false;
+        for (Tok t : c) {
+            String w = t.low;
+            if (w.equals("dün") || w.equals("geçen") || w.matches(".+(m[ıiuü]ş|[dt][ıiuü]m|[dt][ıiuü]k|[dt][ıiuü]n[ıiuü]z)") || w.matches("(var|yok|ol)[dt][ıiuü].*")) return null;
+            if (w.equals("var") || w.equals("saat") || w.matches("\\d{1,2}[:.]\\d{2}.*")) plan = true;
+            for (String p : PLANS) if (w.startsWith(p)) plan = true;
+        }
+        if (!plan) return null;
+        List<Tok> copy = new ArrayList<>();
+        // fresh tokens: the done-sentence check before this may have marked some; only a leading "ve/sonra" stays out
+        for (Tok t : c) { Tok x = new Tok(t.raw); x.used = t.used && (t.low.equals("ve") || t.low.startsWith("sonra")); copy.add(x); }
+        Task k = task(copy, null);
+        if (k.due < startOfDay(today()) || k.title.isEmpty()) return null;
+        for (int i = 0; i < c.size(); i++) c.get(i).used = copy.get(i).used;
+        return k;
     }
 
     /* ---------- one task ---------- */
@@ -281,6 +315,11 @@ final class Parser {
             if (w.startsWith(d) && d.length() > len && suffix(w.substring(d.length()))) { best = i; len = d.length(); }
         }
         return best;
+    }
+
+    static int genMonth(String w) {
+        for (int i = 0; i < MONTHS.length; i++) if (w.equals(MONTHS[i]) || w.matches(MONTHS[i] + "(ın|in|un|ün)")) return i;
+        return -1;
     }
 
     static int monthOf(String w) {
@@ -413,9 +452,11 @@ final class Parser {
                 deadline(c, i + 2, k);
                 return true;
             }
-            if (nn > 0 && nn <= 31 && monthOf(n) >= 0) {
+            boolean mFirst = genMonth(w) >= 0 && num(n) > 0 && num(n) <= 31;   // "kasımın 3'ünde"
+            if (nn > 0 && nn <= 31 && monthOf(n) >= 0 || mFirst) {
+                if (mFirst) nn = num(n);
                 Calendar x = today();
-                int y = x.get(Calendar.YEAR), mo = monthOf(n);
+                int y = x.get(Calendar.YEAR), mo = mFirst ? genMonth(w) : monthOf(n);
                 Calendar d = Calendar.getInstance();
                 d.set(y, mo, nn, 23, 59);
                 if (d.getTimeInMillis() < now) y++;
@@ -471,7 +512,7 @@ final class Parser {
                 else if (w.startsWith("öğle")) period = "öğle";
                 else if (w.startsWith("akşam")) period = "akşam";
                 else if (w.startsWith("gece")) period = "gece";
-                if (period != null) { t.used = true; continue; }
+                if (period != null) { t.used = true; if (i > 0 && c.get(i - 1).low.equals("bu")) c.get(i - 1).used = true; continue; }
             }
             if (h >= 0 || t.used) continue;
             java.util.regex.Matcher hm = java.util.regex.Pattern.compile("^(\\d{1,2})[:.](\\d{2})(\\p{L}*)$").matcher(w);

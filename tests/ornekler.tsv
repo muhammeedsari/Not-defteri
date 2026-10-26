@@ -202,3 +202,16 @@ sabah yedide kalkıp koşuya git	tarih=2026-10-27; saat=07:00
 akşam sekizde Elif'le buluş	tarih=2026-10-26; saat=20:00; kisi=Elif
 öğlen 1'de yemek molasında bankaya git	tarih=2026-10-26; saat=13:00; kat=Para
 gece 2'de ilacı ver	tarih=2026-10-27; saat=02:00; kat=Sağlık
+# 26 Ekim testinden sonra eklenenler (randevu cümleleri, ayın adıyla tarih, geçmiş cümleler)
+bu akşam çöpleri çıkar	tarih=2026-10-26; saat=19:00; n=1
+kasımın 3'ünde doğum günü hediyesi al	tarih=2026-11-03; saat=-
+öbür gün saat on buçukta toplantı var	tarih=2026-10-28; saat=10:30; n=1; kat=İş
+gelecek hafta salı dişçi randevum var	tarih=2026-11-03; saat=-; kat=Sağlık
+15 kasım saat 14:30 noter	tarih=2026-11-15; saat=14:30; n=1
+ayın 20'sinde elektrik faturası son gün	tarih=2026-11-20; kat=Para
+cuma günü sınavım var	tarih=2026-10-30; n=1
+dün toplantı vardı	n=0
+Bugün hava çok güzeldi	n=0
+yarın hava güzel olacakmış	n=0
+akşam yemekte güzel bir sohbet ettik	n=0
+Ahmet'i aradım, yarın 3'te toplantı var	n=1; tarih=2026-10-27; saat=15:00; bitti=1
